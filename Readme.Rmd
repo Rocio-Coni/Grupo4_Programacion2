@@ -1,5 +1,5 @@
 ---
-title: "Readme"
+title: "Práctica de Programación con R"
 author: "Rocio"
 date: "29/6/2021"
 output: html_document
@@ -9,22 +9,411 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+## Ejercicios
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+### Parte 1
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+1. Piden calcular los valores númericos aproximados de:
+a. 
+$$
+\frac{0.3*0.15}{0.3*0.15+0.2*0.8+0.5*0.12}
+$$
+Solución:
 
-```{r cars}
-summary(cars)
+```{r}
+(0.3*0.15)/(0.3*0.15+0.2*0.8+0.5*0.12)
 ```
 
-## Including Plots
+b.
+$$
+\frac{5^6}{6!}*e^{-5}
+$$
+Solución:
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+((5^6)/factorial(6))*exp(-5)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+c.
+$$
+\begin{pmatrix}
+20 \\ 7
+\end{pmatrix}
+*0.4^7*0.6^{13}
+$$
+Solución:
+
+```{r}
+choose(20,7)*(0.4^7)*(0.6^13)
+```
+
+2. Piden realizar las siguientes sumas:
+a.
+$$
+1+2+3+\ldots+1000
+$$
+Solución:
+
+```{r}
+sum(1:1000)
+```
+
+b.
+$$
+1+2+4+8+16+\ldots+1024
+$$
+Solución:
+
+```{r}
+sum(2^(0:10))
+```
+
+3. El vector **grupo** representa al grupo al que pertenece una serie de alumnos piden:
+a. ¿Cuántos elementos tiene?
+
+Solución:
+-Primero cargamos la data
+```{r}
+data <- load("datos.RData")
+data
+```
+-Para visualizar la cantidad de elementos que tiene usamos la función **length**
+```{r}
+length(grupo)
+```
+
+b. ¿En qué posiciones del vector está la letra "A"?
+-Para visualizar las posiciones en las que se encuentra la letra **A** usamos **which**  
+```{r}
+which(grupo == "A")
+```
+
+4. El vector **nota** representa la nota de un examen de los alumnos que están en los grupos del vector **grupo**. Piden:
+a. ¿Cuánto suman todas las notas?
+
+Solución:
+```{r}
+nota
+sum(nota)
+```
+
+b. ¿Cuál es la media aritmética de todas las notas?
+
+Solución:
+```{r}
+mean(nota)
+```
+
+c. ¿En qué posiciones están las notas mayores de 7.0?
+
+Solución:
+```{r}
+which(nota >= 7.0)
+```
+
+d. Visualiza las notas ordenadas de mayor a menor
+
+Solución:
+```{r}
+sort(nota, decreasing = T)
+```
+
+e. ¿En qué posición está la nota máxima?
+
+Solución:
+```{r}
+which(nota == max(nota))
+```
+
+5. A partir de los vectores **grupo** y **nota** definidos. Piden:
+a. Suma de las notas de los 10 primeros alumnos del vector
+
+Solución
+```{r}
+sum(nota[1:10])
+```
+
+b. ¿Cuántos alumnos hay en el grupo **C**?
+
+Solución
+```{r}
+length(grupo[grupo=="C"])
+```
+
+c. ¿Cuántos alumnos han aprobado?
+
+Solución:
+```{r}
+length(nota[nota>=5])
+```
+
+d. ¿Cuántos alumnos del grupo **B** han aprobado?
+
+Solución:
+```{r}
+length(nota[grupo == "B" & nota >= 5])
+```
+
+e. ¿Qué porcentaje de alumnos del grupo **C** han aprobado?
+
+Solución:
+```{r}
+(length(nota[grupo == "C" & nota >= 5])/length(nota[grupo == "C"]))*100
+```
+
+f. ¿De qué grupos son la máxima y mínima notas de toda la muestra?
+
+Solución:
+```{r}
+#La nota máxima es del grupo:
+grupo[nota == max(nota)]
+#La nota mínima es del grupo:
+grupo[nota == min(nota)]
+```
+
+g. Nota media de los alumnos del grupo **A** y **B**, juntos, considerando solo a los que han aprobado.
+
+Solución:
+```{r}
+mean(c(nota[grupo == "A" & nota >= 5],nota[grupo == "B" & nota >= 5]))
+```
+
+6. Piden calcular el percentil 66 de las notas de todos los alumnos, y también de los alumnos del grupo **C**.
+
+Solución:
+```{r}
+quantile(nota, probs = 0.66)
+quantile(nota[grupo=="C"], probs = 0.66)
+```
+
+7. Un alumno tiene una nota de 4.9 ¿Qué procentaje del total de alumnos, tiene una nota menor o igual que la suya?¿Y qué porcentaje tiene una nota mayor o igual que la suya?
+
+Solución:
+```{r}
+#Porcentaje de alumnos que tiene una nota menor o igual a 4.9
+((length(nota[nota <= 4.9]))/(length(nota)))*100
+#Porcentaje de alumnos que tiene una nota mayor o igual a 4.9
+((length(nota[nota >= 4.9]))/(length(nota)))*100
+```
+
+8. Realizar un gráfico de diagramas de caja de notas de cada grupo, para poder comparar el nivel de cada uno de ellos.
+
+Solución:
+```{r}
+par(mfrow = c(2,3))
+boxplot(nota[grupo == "A"], main = "Grupo A")
+boxplot(nota[grupo == "B"], main = "Grupo B")
+boxplot(nota[grupo == "C"], main = "Grupo C")
+boxplot(nota[grupo == "D"], main = "Grupo D")
+boxplot(nota[grupo == "E"], main = "Grupo E")
+```
+
+9. Si la variable **conc** recoge la concentración de plomo (en ppm) en el aire en cierta zona durante un día completo, piden:
+
+a. ¿Cuál ha sido la concentración máxima?
+
+Solución:
+```{r}
+conc
+max(conc)
+```
+
+b. ¿En cuántos de los muestreos se ha superado la concentración de 40.0 ppm?
+
+Solución:
+```{r}
+length(conc[conc > 40])
+```
+
+c. ¿Cuál ha sido la concentración media del día?
+
+Solución:
+```{r}
+mean(conc)
+```
+
+d. ¿Cuales fueron las 10 mediciones más bajas del día? 
+
+Solución:
+```{r}
+sort(conc)[1:10]
+```
+
+e. Si la primera medida fue a las 00:00. ¿A qué hora del día se alcanzó la concentración máxima?
+
+Solución:
+```{r}
+which(conc == max(conc))
+```
+
+###Parte 2
+
+1. Piden graficar los puntos (1,1), (2,4), (3,6), (4,8), (5,25), (6,36), (7,49), (8,64), (9,81), (10,100).
+
+Solución:
+```{r}
+plot(matrix(c(1:10,(1:10)^2), nrow = 10), xlab = "X", ylab = "Y",
+     main = "Ejercicio 1 - Parte 2")
+```
+
+2. Piden ingresar la matriz A en Rstudio:
+
+$$
+A=
+\begin{pmatrix}
+1&2&3\\2&4&6\\3&6&9\\4&8&12
+\end{pmatrix}
+$$
+Solución:
+```{r}
+matrix(c(1,2,3,2,4,6,3,6,9,4,8,12), nrow = 4, byrow = T)
+```
+
+3. Piden ingresar la matriz identidad de tamaño 3:
+$$
+I=
+\begin{pmatrix}
+1&0&0\\0&1&0\\0&0&1
+\end{pmatrix}
+$$
+Solución:
+```{r}
+diag(x = 1,nrow = 3)
+```
+
+4. Piden crear una función que cree una matriz nula ingresando las dimensiones.
+
+Solución:
+```{r}
+matrix_null <- function(val1,val2){
+  resultado <- matrix(0, nrow = val1, ncol = val2)
+  return(resultado)
+}
+matrix_null(4,5)
+```
+
+5. Piden modificar la matriz **diag(4)**, para que se parezca a la matriz **B**:
+$$
+B=
+\begin{pmatrix}
+0&0&0&0\\0&2&0&0\\0&0&3&0\\0&0&0&4
+\end{pmatrix}
+$$
+Solución:
+```{r}
+diag(x = c(0,2,3,4),nrow = 4)
+```
+6. Piden obtener la matriz transpuesta de A(ejercicio2):
+
+Solución:
+```{r}
+A1 <- matrix(c(1,2,3,2,4,6,3,6,9,4,8,12), nrow = 4, byrow = T)
+t(A1)
+```
+7. Piden realizar las siguientes operaciones:
+a. 
+$$
+A+B
+$$
+b.
+$$
+A-B
+$$
+c.
+$$
+3B
+$$
+Solución:
+```{r}
+B1 <- diag(x = c(0,2,3,4),nrow = 4)
+3*B1
+```
+d.
+$$
+BA
+$$
+Solución:
+```{r}
+B1%*%A1
+```
+
+8. Piden crear una función para calcular P^6.
+$$
+P=
+\begin{pmatrix}
+1&2&3\\-2&4&-2\\1&0&1
+\end{pmatrix}
+$$
+9. Piden resolver el sistema de ecuaciones.
+$$
+3x-y+z=-1\\
+9x-2y+z=-9\\
+3x+y-2z=-9
+$$
+Solución:
+```{r}
+A2 <- rbind(c(3, -1, 1), 
+           c(9, -2, 1), 
+           c(3, 1, -2))
+B2 <- c(-1, -9, -9)
+solve(A2, B2)
+```
+10. Utilizando la ayuda de R, piden investigar para qué sirven las funciones **eigen()** y **det()**.
+
+Solución:
+```{r}
+#?eigen()
+#?det()
+```
+
+11. Considerando las matrices.
+$$
+B=
+\begin{pmatrix}
+1&2&3&4&5\\2&4&6&8&10\\3&6&9&12&15\\4&8&12&16&20\\5&10&15&20&25\\6&12&18&24&30\\7&14&21&28&35\\8&16&24&32&40\\9&18&27&36&45\\10&20&30&40&50
+\end{pmatrix}
+$$
+$$
+A=
+\begin{pmatrix}
+0&1&0&1&0\\1&0&1&0&1\\0&1&0&1&0\\0&1&0&0&1\\1&0&1&1&0
+\end{pmatrix}
+$$
+Piden calcular:
+$$
+A*B-AB^t
+$$
+Solución:
+```{r}
+B <- matrix(c(1:10, seq(2, 20, by = 2), seq(3, 30, by = 3), seq(4, 40, by = 4), 
+               seq(5, 50, by = 5)), nrow = 10)
+A <- matrix(c(rep(c(0,1),7), rep(c(0,0,1),2),1,0,1,1,0), nrow = 5, byrow = T)
+
+#Error en las dimensiones: (B)%*%(A)-(A)%*%t(B)
+```
+
+12. Considere:
+$$
+\beta = (X^t*X)^{-1}*X^t*Y
+$$
+Piden determinar la matriz $\beta$
+$$
+X =
+\begin{pmatrix}
+1&1\\1&-1\\1&0\\1&1\\1&2
+\end{pmatrix}
+\\Y=
+\begin{pmatrix}
+0\\0\\1\\1\\3
+\end{pmatrix}
+$$
+Solución:
+```{r}
+x2 <- matrix(c(rep(1,5), 1, -1, 0:2), nrow = 5, byrow = F)
+y2 <- matrix(c(0,0,1,1,3), nrow = 5, byrow = F)
+
+solve(t(x2)%*%x2)%*%t(x2)%*%y2
+```
+
+
+
