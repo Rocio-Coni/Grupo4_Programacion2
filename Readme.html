@@ -614,9 +614,23 @@ boxplot(nota[grupo == &quot;E&quot;], main = &quot;Grupo E&quot;)</code></pre>
 <li>Si la primera medida fue a las 00:00. ¿A qué hora del día se alcanzó la concentración máxima?</li>
 </ol>
 <p>Solución:</p>
-<pre class="r"><code>which(conc == max(conc))</code></pre>
-<pre><code>## [1] 142</code></pre>
-<p>###Parte 2</p>
+<pre class="r"><code># Creaamos una secuencia de datos de fecha con inicio en la hora pedida:
+date1 &lt;- seq(
+  as.POSIXct(&quot;2021-01-01 00:00&quot;),
+  length.out = length(conc),
+  by = &quot;5 min&quot;
+)
+
+#Creamos un data frame con los datos de concentracion de plomo y las fechas 
+df03 &lt;- data.frame(conc, date1)
+
+#Consultamos cual es el valor maximo de concentracion y a su vez nos trae el dato de la hora en que fue tomada
+df03[conc == max(conc),]</code></pre>
+<pre><code>##      conc               date1
+## 142 47.34 2021-01-01 11:45:00</code></pre>
+</div>
+<div id="parte-2" class="section level3">
+<h3>Parte 2</h3>
 <ol style="list-style-type: decimal">
 <li>Piden graficar los puntos (1,1), (2,4), (3,6), (4,8), (5,25), (6,36), (7,49), (8,64), (9,81), (10,100).</li>
 </ol>
@@ -694,15 +708,15 @@ t(A1)</code></pre>
 <li>Piden realizar las siguientes operaciones:</li>
 </ol>
 <ol style="list-style-type: lower-alpha">
-<li><span class="math display">\[
+<li><p><span class="math display">\[
 A+B
-\]</span></li>
-<li><span class="math display">\[
+\]</span></p></li>
+<li><p><span class="math display">\[
 A-B
-\]</span></li>
-<li><span class="math display">\[
+\]</span> Los ejercicios 7a, y 7b no se pueden operar debido a que tienen dimensiones diferentes.</p></li>
+<li><p><span class="math display">\[
 3B
-\]</span> Solución:</li>
+\]</span> Solución:</p></li>
 </ol>
 <pre class="r"><code>B1 &lt;- diag(x = c(0,2,3,4),nrow = 4)
 3*B1</code></pre>
@@ -723,12 +737,28 @@ BA
 ## [3,]    9   18   27
 ## [4,]   16   32   48</code></pre>
 <ol start="8" style="list-style-type: decimal">
-<li>Piden crear una función para calcular P^6. <span class="math display">\[
+<li>Piden crear una función para calcular <span class="math inline">\(P^6\)</span>. <span class="math display">\[
 P=
 \begin{pmatrix}
 1&amp;2&amp;3\\-2&amp;4&amp;-2\\1&amp;0&amp;1
 \end{pmatrix}
-\]</span></li>
+\]</span> Solución:</li>
+</ol>
+<pre class="r"><code>p = matrix(c(1,2,3,-2,4,-2,1,0,1), nrow = 3, byrow = T)
+
+f2 &lt;- function(x,k){
+  r &lt;- diag(dim(x)[2])
+  for(i in 1:k){
+    r &lt;- r%*%x
+  }
+  r
+}
+f2(p,6)</code></pre>
+<pre><code>##       [,1]  [,2]  [,3]
+## [1,] -1792    24 -2824
+## [2,]  -464 -2416 -1344
+## [3,]  -648   440  -912</code></pre>
+<ol start="9" style="list-style-type: decimal">
 <li>Piden resolver el sistema de ecuaciones. <span class="math display">\[
 3x-y+z=-1\\
 9x-2y+z=-9\\
@@ -788,6 +818,103 @@ solve(t(x2)%*%x2)%*%t(x2)%*%y2</code></pre>
 <pre><code>##           [,1]
 ## [1,] 0.5384615
 ## [2,] 0.7692308</code></pre>
+<ol start="13" style="list-style-type: decimal">
+<li>Piden cargar los vectores <strong>year</strong> y <strong>co2</strong> con el siguiente código:</li>
+</ol>
+<pre class="r"><code>data(&quot;co2&quot;)
+means = aggregate(co2, FUN=mean)
+year = as.vector(time(means))
+co2 = as.vector(means)</code></pre>
+<ul>
+<li>El vector <strong>co2</strong> contiene medidas de CO<sub>2</sub> en la atmósfera, en unidades <em>ppm</em>, durante el periodo 1959-1997. El vector <strong>year</strong> contiene sus años correspondientes.</li>
+<li>Calcular un vector de diferencias de CO<sub>2</sub> entre años consecutivos, que sería: CO<sub>2</sub> en 1960 menos CO<sub>2</sub> en 1959 CO<sub>2</sub> en 1961 menos CO<sub>2</sub> en 1960 y así sucesivamente…</li>
+</ul>
+<p>Solución:</p>
+<pre class="r"><code>#df_co2 &lt;- data.frame(year = year, co2 = co2) %&gt;%
+#  mutate(co2_2 = lag(co2), dif_co2 = co2 - co2_2)
+#vect_diferencia &lt;- df_co2$dif_co2[2:39]
+#vect_diferencia</code></pre>
+<ul>
+<li>Crear un <strong>plot</strong> con líneas y puntos mostrando las diferencias consecutivas de CO<sub>2</sub> en función del tiempo (1960, 1961, etc…), en <strong>negrita</strong></li>
+</ul>
+<p>Solución:</p>
+<pre class="r"><code>#plot(x = df_co2$year[2:39], y = vect_diferencia, xlab = &quot;Año&quot;, ylab = &quot;Variación de CO2&quot;, 
+#     main = &quot;Diferencia de CO2 &amp; tiempo&quot;, type = &quot;o&quot;, pch = 16)</code></pre>
+<ul>
+<li>La diferencia de concentración de CO<sub>2</sub> entre 2020 y 2019 fue igual a 2.64. Agregar un punto rojo representando esa diferencia al plot ya creado (usar una forma diferentes como <strong>pch = 4</strong>)</li>
+</ul>
+<p>Solución:</p>
+<pre class="r"><code>#plot(x = df_co2$year[2:39], y = vect_diferencia, xlab = &quot;Años&quot;, ylab = &quot;Variación de CO2&quot;, 
+#     main = &quot;Diferencia de CO2 &amp; tiempo&quot;, type = &quot;o&quot;, pch = 16, xlim = c(1960,2020), 
+#     ylim = c(0,3))
+#points(2020, 2.64, pch = 4, col = &quot;red&quot;)</code></pre>
+<ol start="14" style="list-style-type: decimal">
+<li>Piden:</li>
+</ol>
+<ul>
+<li>Leer el archivo <strong>rainfall.csv</strong> como un <strong>data.frame</strong></li>
+<li>Calcula e imprime un vector con los nombres de las estaciones donde al menos uno de los meses tiene una precipitación superior a 180mm.</li>
+</ul>
+<p>Solución:</p>
+<pre class="r"><code>#names_est &lt;- dplyr::select(df_rain, sep:apr, name) %&gt;% 
+#  dplyr::filter(sep &gt; 180 | oct &gt; 180 | nov &gt; 180 | dec &gt; 180 |
+#                  jan &gt; 180 | feb &gt; 180 |mar &gt;180) %&gt;%
+#  dplyr::select(name)
+#names_est &lt;- as.vector(names_est$name)
+#names_est</code></pre>
+</div>
+<div id="parte-3" class="section level3">
+<h3>Parte 3</h3>
+<ol start="15" style="list-style-type: decimal">
+<li>Se tiene un conjunto de datos de precipitación diaria (período 1980-2013) de ciertas estaciones metereológicas (<strong>raingaugeDataset.csv</strong>), donde cada una de las estaciones están asociadas a un código único (<strong>p.e. qc00000208</strong>). Asimismo, se tiene una lista con los nombres, códigos, coordendas y elevación de cada una de las estaciones (<strong>listRaingauge.csv</strong>)</li>
+</ol>
+<p><strong>GRUPO 04:</strong> MORROPÓN Solicita: a. Determinar la cantidad de <strong>missing values</strong> de la serie de tiempo a paso diario.</p>
+<p>Solución:</p>
+<pre class="r"><code>#data2 &lt;- as_tibble(read.csv(&quot;ProgramacionR-master/data/raingaugeDataset.csv&quot;))
+#names(data2)
+#data3 &lt;- as_tibble(read.csv(&quot;ProgramacionR-master/data/listRaingauge.csv&quot;))
+#names(data3)
+
+#est &lt;- dplyr::select(data3, NOM_EST, CODIGO) %&gt;% 
+#  dplyr::filter(NOM_EST == &quot;MORROPON&quot;)
+
+#ejerc1 &lt;- data2 %&gt;% dplyr::mutate(date = as.Date(date, format = &quot;%d/%m/%Y&quot;)) %&gt;%
+#   rename(pp = qc00000235) %&gt;%
+#   dplyr::select(date, pp) %&gt;%
+#   group_by(date) %&gt;%
+#   mutate(missVal = sum(is.na(pp)))
+# ejerc1</code></pre>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Calcule la serie de tiempo de precipitación <strong>acumulada mensual</strong> (si el # de días con missing values, en un mes, supera el 10%, la precipitación acumulada mensual será considerado como un NA). Determine la cantidad de missing values de la serie de tiempo a paso mensual.</li>
+</ol>
+<p>Solución:</p>
+<pre class="r"><code># ejerc2 &lt;- data2 %&gt;% dplyr::mutate(date = as.Date(date, format = &quot;%d/%m/%Y&quot;)) %&gt;% 
+#   rename(pp = qc00000235) %&gt;%
+#   dplyr::select(date, pp) %&gt;%
+#   group_by(date = str_sub(date, 1, 7)) %&gt;% 
+#   mutate(missVal = sum(is.na(pp)) * 100 / n()) %&gt;%   
+#   summarize(
+#     pp = sum(pp , na.rm = T),
+#     missVal = unique(missVal)
+#   ) %&gt;% 
+#   mutate(
+#     pp = ifelse(missVal &gt;= 10 , NA, pp),
+#     date = as.Date(sprintf(&quot;%1$s-01&quot;, date)), #Para agregar el 01 a la fecha
+#     month= str_sub(date, 6, 7)
+#   )</code></pre>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Determine la cantidad de <strong>missing values</strong> de la serie de tiempo a paso mensual.</li>
+</ol>
+<p>Solución:</p>
+<pre class="r"><code>#sum(is.na(ejerc2$pp))</code></pre>
+<ol start="4" style="list-style-type: lower-alpha">
+<li>Cree una función que calcule, a partir de los datos de precipitación mensual, la <strong>climatología (Ene-Dic)</strong> para el <strong>período 1980-2010</strong>.</li>
+</ol>
+<p>Solución:</p>
+<ol start="5" style="list-style-type: lower-alpha">
+<li>Plotear (boxplot) la variabilidad de los valores mensuales (Ene-Dic) para el período 1980-2013.</li>
+</ol>
+<p>Solución:</p>
 </div>
 </div>
 
