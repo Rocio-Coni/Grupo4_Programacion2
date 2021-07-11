@@ -9,29 +9,99 @@ author:
 date: "10/7/2021"
 output: html_document
 ---
+## Parte 3
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+**15. Manipule los dataframe según se solicite**
+
+Se tiene el conjuntos de datos de precipitación diaria (período 1980 - 2013) de ciertas estaciones meteorológicas (**raingaugeDataset.csv**), donde cada una de estas están asociadas a un código único (**p.e. qc00000208**). Asimismo, se tiene una lista con los nombres, códigos, coordenadas y elevación de cada una de las estaciones (**listRaingauge.csv**).
+
+A cada grupo le corresponde la siguiente estación:
+
+- **Grupo 01**: MALLARES
+- **Grupo 02**: TABACONAS
+- **Grupo 03**: PUERTO PIZARRO
+- **Grupo 04**: MORROPON
+- **Grupo 05**: SAN MIGUEL
+- **Grupo 06**: CHULUCANAS
+- **Grupo 07**: LAMBAYEQUE
+- **Grupo 08**: EL LIMON
+- **Grupo 09**: EL SALTO
+- **Grupo 10**: CHUSIS
+
+```{r}
+library(tidyverse)
+data2 <- as_tibble(read.csv("raingaugeDataset.csv"))
+names(data2)
+data3 <- as_tibble(read.csv("listRaingauge.csv"))
+names(data3)
+
+est <- dplyr::select(data3, NOM_EST, CODIGO) %>% 
+  dplyr::filter(NOM_EST == "MORROPON")
 ```
 
-# EJERCICIOS
+De lo descrito anteriormente, se solicita:
 
-## PARTE 1
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+a) Determine la cantidad de **missing values** de la serie de tiempo a paso diario.
+```{r}
+data2 %>% dplyr::mutate(date = as.Date(date, format = "%d/%m/%Y")) %>%
+  rename(pp = qc00000235) %>% 
+  dplyr::select(date, pp) %>%
+  group_by(date) %>% 
+  mutate(missVal = sum(is.na(pp)))
 ```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+b) Calcule la serie de tiempo de precipitación **acumulada mensual** (si el # de días con missing values, en un mes, supera el 10%, la precipitación acumulada mensual será considerado como un **`NA`**).
+```{r}
+ejerc2 <- data2 %>% dplyr::mutate(date = as.Date(date, format = "%d/%m/%Y")) %>% 
+  rename(pp = qc00000235) %>%
+  dplyr::select(date, pp) %>%
+  group_by(date = str_sub(date, 1, 7)) %>% 
+  mutate(missVal = sum(is.na(pp)) * 100 / n()) %>%   
+  summarize(
+    pp = sum(pp , na.rm = T),
+    missVal = unique(missVal)
+  ) %>% 
+  mutate(
+    pp = ifelse(missVal >= 10 , NA, pp),
+    date = as.Date(sprintf("%1$s-01", date)), #Para agregar el 01 a la fecha
+    month= str_sub(date, 6, 7)
+  )
 ```
+c) Determine la cantidad de **missing values** de la serie de tiempo a paso mensual.
+```{r}
+sum(is.na(ejerc2$pp))
+max(ejerc2$pp, na.rm = T)
+min(ejerc2$pp, na.rm = T)
+```
+d) Cree una función que calcule, a partir de los datos de preicpitación mensual, la **climatología (Ene-Dic)** para el **período 1980-2010**.
+```{r}
+ejerc4 <- function(datax){
+  rango <- filter(datax, date >= "1980-01-01" & date <="2010-12-31") 
+  monthx <- group_by(rango, month)
+  mediax <- summarise(monthx, ppmean= mean(pp, na.rm = T))
+  return (mediax)
+}
+ejerc4(ejerc2)
+```
+e) Poltear (boxplot) la variabilidad de los valores mensuales (Ene-Dic) para el período 1980-2013.
+```{r}
+ggplot(ejerc2, aes(month, pp, fill=month)) + 
+  ggtitle("Variabilidad de los valores mensuales entre 1980-2013")+
+  labs(x = "Meses", 
+       y = "Precipitación")+
+  geom_boxplot()+
+  theme_bw() + 
+  theme(
+    panel.background = element_rect(fill = "lightblue"),
+    panel.grid.minor = element_line(linetype = "dotted")
+  )+
+  scale_x_discrete(
+    labels = month.abb,
+  )+
+  labs(caption = "Interpretación: Se observa que entre los meses de enero y abril hay mayor
+       variabilidad de los datos de precipitación siendo el mes de marzo el 
+       más resaltante, y los meses de mayo a diciembre tienden mantener valores
+       nulos ya que es temporada seca. También se puede observar que durante
+       todos los meses se presentan valores atípicos debido a errores de lectura
+       o anomalías")
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```
