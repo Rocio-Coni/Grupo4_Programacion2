@@ -9,6 +9,236 @@ author:
 date: "10/7/2021"
 output: html_document
 ---
+
+## Parte 1
+
+**1. Calcula los valores numèricos aproximados de:** 
+
+a) $\frac{0.3 \cdot 0.15}{0.3 \cdot 0.15 + 0.2 \cdot 0.8 + 0.5 \cdot 0.12}$
+
+
+```{r}
+a_1 <- (0.3*0.15)
+a <- a_1/(a_1 + (0.2*0.8) + (0.5*0.12))
+a
+```
+
+b) $\frac{5^6}{6!} e^{-5}$
+
+```{r}
+b_1 <- (5^6)
+b_2 <- factorial(6)
+b_3 <- exp(-5)
+b   <- (b_1/b_2)*b_3
+b
+```
+
+c) $\begin{pmatrix} 20 \\ 7 \end{pmatrix} 0.4^7  0.6^{13}$
+
+```{r}
+c <- choose(20,7)*(0.4^7)*(0.6)^13
+c
+```
+
+**2. Realizar la siguiente suma**
+
+a) $1+2+3+...+1000$
+
+```{r}
+sum(1:1000)
+```
+b) $1+2+4+8+16+...+1024$
+
+```{r}
+sum(2^(0:10))
+```
+
+**3. El vector  `grupo` representa el grupo al que pertenece una serie de alumnos**
+
+Para desarrollar los siguientes ejercios debemos cargar las variables almacenadas en el siguiente archivo [Rdata](https://goo.gl/uDzU8v)
+
+```{r}
+load("datos.RData")
+```
+
+
+a) ¿Cuántos elementos tiene?
+
+```{r}
+
+length(grupo)
+```
+
+b) ¿En qué posiciones del vector está la letra "A"?
+
+```{r}
+which(grupo == "A")
+```
+
+**4. El vector `nota` representa la nota de un examen de los alumnos que están en los grupos del vector `grupo`.**
+
+a) ¿Cuanto suman todas las notas?
+
+```{r}
+sum(nota)
+```
+b) ¿Cual es la media aritmética de todas las notas?
+
+```{r}
+mean(nota)
+```
+c) ¿En qué posiciones están las notas mayores de *7.0*?
+
+```{r}
+which(nota > 7)
+```
+d) Visualiza las notas ordenadas de mayor a menor
+
+```{r}
+nota_d <- sort(nota, decreasing = T)
+head(nota_d)
+```
+e) ¿En qué posición está la nota máxima?
+
+```{r}
+which(nota == max(nota))
+```
+
+**5. A partir de los vectores `grupo` y `nota` definidos.**
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+nota_grupo <- data.frame(grupo,nota)
+head(nota_grupo)
+
+```
+
+a) Suma las notas de los 10 primeros alumnos del vector
+
+```{r}
+a_5 <-sum(nota_grupo$nota[1:10])
+a_5
+```
+b) ¿Cuántos alumnos hay del grupo *C*?
+
+```{r}
+b_5 <- subset(nota_grupo, grupo =="C")
+count(b_5)
+```
+
+c) ¿Cuántos alumnos han aprobado?
+
+```{r}
+c_5 <- count(subset(nota_grupo , nota > 5))
+c_5
+```
+
+d) ¿Cuántos alumnos del grupo *B* han aprobado?
+
+```{r}
+d_5 <- subset(nota_grupo, grupo == "B" & nota > 5 )
+d_5
+count(d_5)
+```
+
+e) ¿Qué porcentaje de alumnos del grupo *C* han aprobado?
+
+```{r}
+aproC <- subset(nota_grupo, grupo =="C"& nota > 5)
+e_5 <- (count(aproC)/count(b_5))*100
+e_5
+```
+
+f) ¿De qué grupos son la máxima y mínima notas de toda la muestra?
+
+```{r}
+max(nota[grupo == "A"])
+```
+
+g) Nota media de los alumnos de grupo *A* y *B*, juntos, considerando sólo a los que han aprobado.
+
+```{r}
+g_1 <- nota[ grupo=='A' & nota >5]
+g_2 <- nota[ grupo=='B' & nota >5]
+g_3 <- c(g_1,g_2)
+g <- round(mean(g_3),3)
+g
+```
+
+
+**6. Calcula el percentil 66 de las notas de todos los alumnos, y también de los alumnos del grupo C.**
+
+```{r}
+per66 <- quantile(nota,0.66)
+per66
+quantile(nota[ grupo=="C"] , 0.66)
+```
+
+**7. Un alumno tiene una nota de 4.9. ¿Qué porcentaje, del total de alumnos, tiene una nota menor o igual que la suya? ¿Y qué porcentaje tiene una nota mayor o igual que la suya?**
+
+```{r}
+por_c <-subset(nota_grupo, nota >=4.9)
+(count(por_c)/count(nota_grupo))*100
+por_cmn <-subset(nota_grupo, nota <=4.9)
+(count(por_cmn)/count(nota_grupo))*100
+```
+
+**8. Realiza el gráfico de diagramas de caja de las notas de cada grupo, para poder comparar el nivel de cada uno de ellos.**
+
+```{r}
+par(mfrow = c(2,3))
+boxplot(nota[grupo == "A"], main = "Grupo A")
+boxplot(nota[grupo == "B"], main = "Grupo B")
+boxplot(nota[grupo == "C"], main = "Grupo C")
+boxplot(nota[grupo == "D"], main = "Grupo D")
+boxplot(nota[grupo == "E"], main = "Grupo E")
+```
+
+**9. Si la variable `conc` recoge la concentración de plomo (en ppm) en el aire de cierta zona durante un día completo**
+
+a) ¿Cuál ha sido la concentración máxima?
+
+```{r}
+max(conc)
+```
+
+b) ¿En cuántos de los muestreos se ha superado la concentración de 40.0 ppm?
+
+```{r}
+which(conc > 40) %>%  length()
+```
+
+c) ¿Cuál ha sido la concentración media del día?
+
+```{r}
+mean(conc)
+```
+
+d) ¿Cuáles fueron las 10 mediciones más bajas del día?
+
+```{r}
+conc1 <- sort(conc)
+conc1[1:10]
+```
+
+e) Si la primera medida fue a las 00:00. ¿A qué hora del día se alcanzó la concentración máxima?
+
+```{r}
+# Creaamos una secuencia de datos de fecha con inicio en la hora pedida:
+date1 <- seq(
+  as.POSIXct("2021-01-01 00:00"),
+  length.out = length(conc),
+  by = "5 min"
+)
+
+#Creamos un data frame con los datos de concentracion de plomo y las fechas 
+df03 <- data.frame(conc, date1)
+
+#Consultamos cual es el valor maximo de concentracion y a su vez nos trae el dato de la hora en que fue tomada
+df03[conc == max(conc),]
+```
+
+
 ## Parte 3
 
 **15. Manipule los dataframe según se solicite**
@@ -83,7 +313,7 @@ ejerc4 <- function(datax){
 ejerc4(ejerc2)
 ```
 e) Poltear (boxplot) la variabilidad de los valores mensuales (Ene-Dic) para el período 1980-2013.
-```{r}
+```{r message=FALSE, warning=FALSE}
 ggplot(ejerc2, aes(month, pp, fill=month)) + 
   ggtitle("Variabilidad de los valores mensuales entre 1980-2013")+
   labs(x = "Meses", 
