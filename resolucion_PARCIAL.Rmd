@@ -18,7 +18,27 @@ library(tidyverse)
 Solución:
 
 ```{r}
+#Si expresion es TRUE, la instrucción se ejecuta. Pero si es FALSO, no pasa nada.
+altura<- function(x){
+  if(x<1000){             #Caso sea un valor menor a 1000, no estaria definido
+    v<- NA
+  }  
+  if(x>=1000 & x<=3000){ #Caso que este en el intervalo de Mil a Tres Mil
+    v<- 85.4 -(2*(x/500)) # cambiamos 81.4 por 85.4 "e x a 1000 metros es de 81.4 unidad."
+  }
+  if(x>=3000 & x<=4000){ #Caso que este en el intervalo de Tres Mil a Cuatro Mil
+    v<- 85.4 -(0.5*(x/500))
+  }
+  if (x > 4000){         #Caso que sea mayor a Cuatro Mil
+    v<-85.4
+  }
+  return(v)            #Ante el analisis arroje el resultado "red"
+}
+altura(400)            #Probamos con 4 valores (400, 1500, 3500, 5000)
+altura(1500)
+altura(3500)
 
+altura(1000) # se corrobora el dato x a "e x a 1000 metros es de 81.4 unidades."
 ```
 
 2. Resolver el siguiente sistema de ecuaciones.
