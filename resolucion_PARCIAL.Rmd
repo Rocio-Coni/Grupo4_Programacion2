@@ -29,7 +29,7 @@ altura<- function(x){
   if(x>=3000 & x<=4000){ #Caso que este en el intervalo de Tres Mil a Cuatro Mil
     v<- 85.4 -(0.5*(x/500))
   }
-  if (x > 4000){         #Caso que sea mayor a Cuatro Mil
+  if (x > 4000){        #Caso que sea mayor a Cuatro Mil
     v<-85.4
   }
   return(v)            #Ante el analisis arroje el resultado "red"
