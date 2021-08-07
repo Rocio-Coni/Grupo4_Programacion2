@@ -74,7 +74,11 @@ d. Graficar, con ggplot2, la precipitación (enero a diciembre) observada y mode
 Solución:
 
 ```{r}
-
+data4 <- data1 %>% 
+  group_by(bh_month, bh_esc) %>% 
+  ggplot(mapping = aes(x = bh_esc, y = bh_pc, fill = bh_esc)) + geom_boxplot()+
+  labs(title = "Precipitación de Enero a Diciembre",  x = "Escenarios",  y = "Precipitación")
+data4
 ```
 
 ## PARTE 3
