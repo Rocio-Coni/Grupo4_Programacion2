@@ -1,0 +1,99 @@
+---
+title: "solucionario"
+author: "Fiorella Palomino"
+date: "24/7/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## PREGUNTA 1: Se tiene una variable x (no necesariamente temperatura) que depende de la elevaci ́on. Se sabe que entrelos 1000 y 3000 metros, esta variable se ve reducido en 2 unidades cada 500 metros. Entre los 3000 y 4000 metros, var ́ıa en 0.5 unidades, y a una altitud mayor, su valor es constante. Cree una funci ́on que permita obtener el valor de esta variable,  ́unicamente con el dato de la elevac*on**.
+
+```{r }
+datos <- function(x){
+if (x >= 1000 & x <= 3000){
+ v <- 85.4 -( 2*(x/500))  
+
+}
+
+if (x >= 3000 & x <= 4000){
+v <- 85.4 - (0.5*(x/500))
+}
+if (x>4000){
+v <- 85.4
+}
+return(v)
+}
+datos(2500)
+```
+
+
+##**PREGUNTA 2: Resolver el siguiente sistema de ecuaciones**
+```{r }
+a <- c(3, 2, 1)
+b <- c(2, -1, 4)
+c <- c(-2, 3, 2)
+cbind(a, b, c)
+A <- cbind(a, b, c)
+m1 <- c(0, 9, -4)
+cbind(m1)
+B <- cbind(m1)
+solve(A,B)
+```
+
+##**PREGUNTA 3: A partir del siguiente conjunto de datos, se describen las variables:
+
+uh name → Nombre de cuenca
+bh esc → Escenario (observado y modelos clim ́aticos)
+bh month → Meses
+bh pc → Precipitaci ́on
+bh er → Evapotranspiraci ́on Real
+bh rh → Rendimiento H ́ıdrico
+bh qd → Caudal
+Se solicita lo siguiente:**
+
+**Calcular la precipitaci ́on acumulada anual (Valores observados) para la cuenca asignada.
+```{r }
+setwd("C:/Users/User/Documents/progrmacion_ejercicios")
+data01 <- read.csv(file = "mods_clima_uh.csv")
+head(data01)
+library(tidyverse)
+(cuenca <- as_tibble(data01))
+(cuenca_coata_obs <- cuenca %>% 
+    subset( uh_name == "Cuenca Coata" & bh_esc == "Observado" ) %>% 
+    group_by(uh_name) %>% 
+    summarize( pp_acumulada = mean(bh_pc)))
+
+(cuenca_coata_ACCESS <- cuenca %>% 
+    subset( uh_name == "Cuenca Coata" & bh_esc == "ACCESS 1.0" ) %>% 
+    group_by(uh_name) %>% 
+    summarize( pp_acumulada = mean(bh_pc)))
+
+(cuenca_coata_MPI <- cuenca %>% 
+    subset( uh_name == "Cuenca Coata" & bh_esc == "MPI-ESM-LR" ) %>% 
+    group_by(uh_name) %>% 
+    summarize( pp_acumulada = mean(bh_pc)))
+
+(cuenca_Coata_HadGEM2 <- cuenca %>% 
+    subset( uh_name == "Cuenca Coata" & bh_esc == "HadGEM2-ES" ) %>% 
+    group_by(uh_name) %>% 
+    summarize( pp_acumulada = mean(bh_pc)))
+```
+
+**Graficar con ggplot2, la precipitaci ́on (enero a diciembre) observada y modelos clim ́aticos.
+```{r }
+
+prep <- data01$bh_pc[1:12]
+mes <- data01$bh_month[1:12]
+mes2 <- as.factor(mes)
+tabla <- data.frame(mes2, prep)
+
+ggplot(data=tabla, aes(x=mes2, y=prep)) +
+  geom_bar(stat = "identity") +
+  labs (title = "pp coata",
+        x="mes",
+        y="pp"
+)
+```
+

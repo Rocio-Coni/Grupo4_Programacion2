@@ -1,0 +1,158 @@
+---
+title: "ANALISIS DE CLUSTER"
+author: 
+- name: "Conislla Huamanyalli Rocio"
+- name: "Coba Bautista Kevin"
+- name: "Chavez Chipana Joel"
+- name: "Silvestre Jimenez Brenda"
+- name: "Tuanama Satalaya Pierina"
+date: "11/09/2021"
+output: bookdown::gitbook
+site: bookdown::bookdown_site
+documentclass: book
+biblio-style: apalike
+link-citations: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+pacman::p_load(tidyverse)
+```
+# PRESENTACIÓN
+El siguiente trabajo se basa en  análisis de componentes principales, el cual es una técnica que se usó para describir nuestro conjunto de datos criminalísticos en términos de nuevas variables o componentes Los componentes se ordenan por la cantidad de varianza original que describen, por lo que la técnica es útil para reducir la dimensionalidad de un conjunto de datos.
+
+
+# INTRODUCCIÓN
+La inseguridad ciudadana en nuestro país es, lamentablemente, un problema grave, complejo y aparentemente crónico, sobre el cual, ahora todos comentamos, opinamos, criticamos, pero que realmente, muy pocos conocemos y participamos proactivamente; y es asi que vemos con temor como este fenómeno social sigue permanentemente afectando la paz y tranquilidad de los peruanos y más aún, condenando el desarrollo y bienestar nacional.
+La inseguridad ciudadana surge como un fenómeno y problema social en la actualidad, en sociedades como la peruana, que poseen un diverso nivel de desarrollo económico, múltiples rasgos culturales y regímenes políticos de distinto signo, no pudiéndose establecer, por tanto, distinciones simplistas para caracterizar factores asociados a su incremento y formas de expresión.
+Una de las formas que podemos realizar para contemplar la correlación existente entre las variables más importantes sobre inseguridad ciudadana es la técnica llamada análisis de componentes principales (PCA), la cual nos permite pasar nuestras variables descargadas de la página DATACRIM, que es el sistema integrado de  estadísticas de la criminalidad y seguridad ciudadana, que maneja datos provistos por el INEI y la Policía Nacional del Perú.
+El PCA nos permite pasar nuestras variables que están correlacionadas, a pocas componentes principales, de este modo, con unas pocas combinaciones lineales, que serán las componentes principales, sería suficiente para entender la información contenida en nuestros datos.
+Al mismo tiempo, la forma en que se construyen las componentes, y su relación con unas u otras de las variables originales, sirven para entender la estructura de correlación inherente a los datos. Por último, las componentes principales, que forman un vector aleatorio de dimensión menor, pueden ser empleadas en análisis estadísticos posteriores
+
+# OBJETIVOS
+•	Transformar el conjunto de variables de criminalidad (variables originales) en un nuevo conjunto de variables (componentes principales), incorrelacionadas entre sí.
+
+•	Facilitar la interpretación de la data de criminalística, para que pueda ser utilizado en investigaciones futuras.
+
+•	Clusterizar y encontrar diferencias entre nuestras variables
+
+
+# ADQUISICION DE DATOS
+# PROCESO DE ANÁLISIS DE LOS DATOS
+## Análisis Exploratorio de Datos
+Para el presente análisis usamos la data descargada anteriormente, las cuales exploraremos y ordenaremos adecuadamente dichos datos.
+
+### Importamos los datos
+Cargamos los datos crudos y visualizamos los datos en desorden, y con valores NA, las cuales limpiamos y tranformamos.
+```{r error=TRUE}
+data0 <- read.csv("DEPARTAMENTOS.csv", sep = ";")
+tibble(data0)
+# saveRDS(data0, file = "data0RDS.RDS")
+```
+
+Primeramente reducimos el nombre de nuestras variables paara una mejor visualización
+
+```{r}
+names(data0) <- c("Dep","Pob","NEP",
+                  "S_F","S_M","SNE",
+                  "NE_I","NE_PC","ND_PI",
+                  "NE_SC","NE_SI","NE_SnUC",
+                  "NE_SnUI","NE_SUC","NE_SUI",
+                  "NE_Pstgr","NE_NAp","DcP",
+                  "DcSegP","DcL","DcVCS",
+                  "DcF","DcAP","DcTP",
+                  "DcOFM","DcFP","Dt",
+                  "DcCBFN","DcH","Otros",
+                  "E_18_19","E_20_24","E_25_29",
+                  "E_30_34","E_35_39","E_40_44",
+                  "E_45_49","E_50_59","E_60_")
+
+#View(data0)
+tibble(data0)
+```
+
+
+### Eliminar NA 
+
+Se evalua los Missing Values en la data ya que no deben ser el mayor porcentaje del total.
+
+```{r}
+data0 %>% mice::md.pattern(rotate.names=TRUE)
+#data0 %>% VIM::aggr(numbers=T, sortVar=T )
+```
+
+Observando el grafico, se entiende que para la primera fila hay una observacion que tiene NA en la variable DcH en la segunda fila,hay una observacion que tiene NA en DcBFN y DcH, así sucesivamente hasta llegar a la ultima fila, donde una observacion tiene 26 NA, el cual definitivamente se eliminara.
+
+
+### Eliminar filas
+
+Las variables principales que son sustento base de que existen los datos y son reales, vienen a ser cinco, la variable poblacion, establecimientos penitenciarios, mujeres y varones, es por ello que si alguno no tiene datos, procedera a ser eliminado
+
+```{r}
+data0 <- data0[!is.na(data0$Pob),]
+data0 <- data0[!is.na(data0$NEP),]
+data0 <- data0[!is.na(data0$S_F),]
+data0 <- data0[!is.na(data0$S_M),]
+
+tibble(data0) %>% print(n=26)
+```
+
+Como se observa, la cantidad de departamentos se redujo, se elimino al Callao, Moquegua y Madre de Dios
+
+### Eliminar columnas
+Teniendo todos los departamentos con la data principal, se procede a analizar las varibles, teniendo en cuenta que no podemos trabajar con NA,se procedera a eliminar aquellas columnas que la contengan. 
+
+Examinamos cuantos NA tiene cada columna para darnos una idea
+```{r}
+sapply(data0, function(x) sum(is.na(x))) #numero de nulos por columnas
+```
+
+Eliminamos todas las columnas que tienen al menos un NA
+```{r}
+colMeans(is.na(data0))
+data1 <- data0[,-which(colMeans(is.na(data0)) > 0)]
+tibble(data1) %>% print(n=26)
+#View(data1)
+```
+
+De 39 variables se eliminaron 10. Ahora verificamos que nuestra data no tenga NA
+```{r}
+data1 %>% mice::md.pattern(rotate.names=TRUE) #verificando que no hay NA
+```
+
+### Gráfico resumen 
+Mostramos porcentaje de Delitos en todo el Perú, después de la limpieza de datos.
+```{r}
+#glimpse(data1)
+total <- dplyr::select(data1,15:20)
+suma <- colSums (total)
+porcent <- cbind(suma,prop = prop.table(suma))*100
+grafico <- data.frame(porcent)
+grafico
+etiquetas <- c("48.25% DcP","22.52% DcSegP","17.09% DcL","8.75% DcVCS","2.08% DcF","1.27% DcAP")
+
+pie(grafico$prop , col=rainbow(length(grafico$prop)), 
+    labels = etiquetas,
+    main = "Delitos en Perú",
+    sub = "Evaluación de la cantidad de delitos registrados por tipo.")
+
+legend("topleft", 
+       c("D. C. patrominio",
+         "D. C. la seguridad publica",
+         "D. C. la libertad",
+         "D. C. la vida, el cuerpo y la salud",
+         "D. C. la familia",
+         "D. C. la administracion publica"),
+       cex = 0.5,
+       fill = rainbow(length(grafico$prop)))
+```
+
+
+En el grafico observamos que el Delito contra el patrimonio es el que mas se da a nivel Nacional, seguido por el Delito contra la seguridad publica, estos dos abarcan casi el 70% del total ya que van de la mano, la inseguridad en las calles genera robos, extorsion, etc
+
+## Análisis de Componentes Principales
+# RESULTADOS
+# DISCUSION DE RESULTADOS
+# CONCLUSIONES
+# RECOMENDACIONES
+# BIBLIOGRAFIA

@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>5 PROCESO DE ANÁLISIS DE LOS DATOS | ANALISIS DE CLUSTER</title>
+  <meta name="description" content="5 PROCESO DE ANÁLISIS DE LOS DATOS | ANALISIS DE CLUSTER" />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="5 PROCESO DE ANÁLISIS DE LOS DATOS | ANALISIS DE CLUSTER" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="5 PROCESO DE ANÁLISIS DE LOS DATOS | ANALISIS DE CLUSTER" />
+  
+  
+  
+
+
+
+<meta name="date" content="2021-11-09" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="adquisicion-de-datos.html"/>
+<link rel="next" href="resultados.html"/>
+<script src="libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="presentación.html"><a href="presentación.html"><i class="fa fa-check"></i><b>1</b> PRESENTACIÓN</a></li>
+<li class="chapter" data-level="2" data-path="introducción.html"><a href="introducción.html"><i class="fa fa-check"></i><b>2</b> INTRODUCCIÓN</a></li>
+<li class="chapter" data-level="3" data-path="objetivos.html"><a href="objetivos.html"><i class="fa fa-check"></i><b>3</b> OBJETIVOS</a></li>
+<li class="chapter" data-level="4" data-path="adquisicion-de-datos.html"><a href="adquisicion-de-datos.html"><i class="fa fa-check"></i><b>4</b> ADQUISICION DE DATOS</a></li>
+<li class="chapter" data-level="5" data-path="proceso-de-análisis-de-los-datos.html"><a href="proceso-de-análisis-de-los-datos.html"><i class="fa fa-check"></i><b>5</b> PROCESO DE ANÁLISIS DE LOS DATOS</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="proceso-de-análisis-de-los-datos.html"><a href="proceso-de-análisis-de-los-datos.html#análisis-exploratorio-de-datos"><i class="fa fa-check"></i><b>5.1</b> Análisis Exploratorio de Datos</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="proceso-de-análisis-de-los-datos.html"><a href="proceso-de-análisis-de-los-datos.html#importamos-los-datos"><i class="fa fa-check"></i><b>5.1.1</b> Importamos los datos</a></li>
+<li class="chapter" data-level="5.1.2" data-path="proceso-de-análisis-de-los-datos.html"><a href="proceso-de-análisis-de-los-datos.html#eliminar-na"><i class="fa fa-check"></i><b>5.1.2</b> Eliminar NA</a></li>
+<li class="chapter" data-level="5.1.3" data-path="proceso-de-análisis-de-los-datos.html"><a href="proceso-de-análisis-de-los-datos.html#eliminar-filas"><i class="fa fa-check"></i><b>5.1.3</b> Eliminar filas</a></li>
+<li class="chapter" data-level="5.1.4" data-path="proceso-de-análisis-de-los-datos.html"><a href="proceso-de-análisis-de-los-datos.html#eliminar-columnas"><i class="fa fa-check"></i><b>5.1.4</b> Eliminar columnas</a></li>
+<li class="chapter" data-level="5.1.5" data-path="proceso-de-análisis-de-los-datos.html"><a href="proceso-de-análisis-de-los-datos.html#gráfico-resumen"><i class="fa fa-check"></i><b>5.1.5</b> Gráfico resumen</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="proceso-de-análisis-de-los-datos.html"><a href="proceso-de-análisis-de-los-datos.html#análisis-de-componentes-principales"><i class="fa fa-check"></i><b>5.2</b> Análisis de Componentes Principales</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="resultados.html"><a href="resultados.html"><i class="fa fa-check"></i><b>6</b> RESULTADOS</a></li>
+<li class="chapter" data-level="7" data-path="discusion-de-resultados.html"><a href="discusion-de-resultados.html"><i class="fa fa-check"></i><b>7</b> DISCUSION DE RESULTADOS</a></li>
+<li class="chapter" data-level="8" data-path="conclusiones.html"><a href="conclusiones.html"><i class="fa fa-check"></i><b>8</b> CONCLUSIONES</a></li>
+<li class="chapter" data-level="9" data-path="recomendaciones.html"><a href="recomendaciones.html"><i class="fa fa-check"></i><b>9</b> RECOMENDACIONES</a></li>
+<li class="chapter" data-level="10" data-path="bibliografia.html"><a href="bibliografia.html"><i class="fa fa-check"></i><b>10</b> BIBLIOGRAFIA</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">ANALISIS DE CLUSTER</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="proceso-de-análisis-de-los-datos" class="section level1" number="5">
+<h1><span class="header-section-number">5</span> PROCESO DE ANÁLISIS DE LOS DATOS</h1>
+<div id="análisis-exploratorio-de-datos" class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> Análisis Exploratorio de Datos</h2>
+<p>Para el presente análisis usamos la data descargada anteriormente, las cuales exploraremos y ordenaremos adecuadamente dichos datos.</p>
+<div id="importamos-los-datos" class="section level3" number="5.1.1">
+<h3><span class="header-section-number">5.1.1</span> Importamos los datos</h3>
+<p>Cargamos los datos crudos y visualizamos los datos en desorden, y con valores NA, las cuales limpiamos y tranformamos.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="proceso-de-análisis-de-los-datos.html#cb1-1" aria-hidden="true" tabindex="-1"></a>data0 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;DEPARTAMENTOS.csv&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;;&quot;</span>)</span>
+<span id="cb1-2"><a href="proceso-de-análisis-de-los-datos.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(data0)</span></code></pre></div>
+<pre><code>## # A tibble: 25 x 39
+##    Departamento Poblacion Numero.de.establecimientos.pe~ Sexo_F Sexo_M Sin.nivel
+##    &lt;chr&gt;            &lt;int&gt;                          &lt;int&gt;  &lt;int&gt;  &lt;int&gt;     &lt;int&gt;
+##  1 AMAZONAS        379384                              2     35    824        35
+##  2 ANCASH         1083519                              2    156   3179         3
+##  3 APURIMAC        405759                              2     61    549        21
+##  4 AREQUIPA       1382730                              3    158   2226        48
+##  5 AYACUCHO        616176                              2    192   2347        89
+##  6 CAJAMARCA      1341012                              4    107   1867       110
+##  7 CALLAO          994494                              1     NA   3199        16
+##  8 CUZCO          1205527                              3    186   2586        70
+##  9 HUANCAVELICA    347639                              1      9    191         3
+## 10 HUANUCO         721047                              1    162   2392       145
+## # ... with 15 more rows, and 33 more variables: Educacion.inicial &lt;int&gt;,
+## #   Primaria.completa &lt;int&gt;, Primaria.incompleta &lt;int&gt;, Secund..completa &lt;int&gt;,
+## #   Secund..incompleta &lt;int&gt;, Sup..no.universitaria.completa &lt;int&gt;,
+## #   Sup..no.universitaria.incompleta &lt;int&gt;, Sup..universitaria.completa &lt;int&gt;,
+## #   Sup..universitaria.incompleta &lt;int&gt;, Postgrado &lt;int&gt;, no.aplica &lt;int&gt;,
+## #   Delitos.contra.el.patrimonio &lt;int&gt;,
+## #   Delitos.contra.la.seguridad.publica &lt;int&gt;,
+## #   Delitos.contra.la.libertad &lt;int&gt;,
+## #   Delitos.contra.la.vida..el.cuerpo.y.la.salud &lt;int&gt;,
+## #   Delitos.contra.la.familia &lt;int&gt;,
+## #   Delitos.contra.la.administracion.publica &lt;int&gt;,
+## #   Delitos.contra.la.tranquilidad.publica &lt;int&gt;,
+## #   Delitos.contra.el.orden.fi.nciero.y.monetario &lt;int&gt;,
+## #   Delitos.contra.la.fe.publica &lt;int&gt;, Delitos.tributarios &lt;int&gt;,
+## #   Delitos.contra.la.confianza.y.la.bue..fe.en.los.negocios &lt;int&gt;,
+## #   Delitos.contra.la.humanidad &lt;int&gt;, OTROS.1. &lt;int&gt;, Edad.18.19 &lt;int&gt;,
+## #   Edad.20.24 &lt;int&gt;, Edad.25.29 &lt;int&gt;, Edad.30.34 &lt;int&gt;, Edad.35.39 &lt;int&gt;,
+## #   Edad.40.44 &lt;int&gt;, Edad.45.49 &lt;int&gt;, Edad.50.59 &lt;int&gt;, Edad.60.a.mas &lt;int&gt;</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="proceso-de-análisis-de-los-datos.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(data0, file = &quot;data0RDS.RDS&quot;)</span></span></code></pre></div>
+<p>Primeramente reducimos el nombre de nuestras variables paara una mejor visualización</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="proceso-de-análisis-de-los-datos.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(data0) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Dep&quot;</span>,<span class="st">&quot;Pob&quot;</span>,<span class="st">&quot;NEP&quot;</span>,</span>
+<span id="cb4-2"><a href="proceso-de-análisis-de-los-datos.html#cb4-2" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot;S_F&quot;</span>,<span class="st">&quot;S_M&quot;</span>,<span class="st">&quot;SNE&quot;</span>,</span>
+<span id="cb4-3"><a href="proceso-de-análisis-de-los-datos.html#cb4-3" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot;NE_I&quot;</span>,<span class="st">&quot;NE_PC&quot;</span>,<span class="st">&quot;ND_PI&quot;</span>,</span>
+<span id="cb4-4"><a href="proceso-de-análisis-de-los-datos.html#cb4-4" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot;NE_SC&quot;</span>,<span class="st">&quot;NE_SI&quot;</span>,<span class="st">&quot;NE_SnUC&quot;</span>,</span>
+<span id="cb4-5"><a href="proceso-de-análisis-de-los-datos.html#cb4-5" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot;NE_SnUI&quot;</span>,<span class="st">&quot;NE_SUC&quot;</span>,<span class="st">&quot;NE_SUI&quot;</span>,</span>
+<span id="cb4-6"><a href="proceso-de-análisis-de-los-datos.html#cb4-6" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot;NE_Pstgr&quot;</span>,<span class="st">&quot;NE_NAp&quot;</span>,<span class="st">&quot;DcP&quot;</span>,</span>
+<span id="cb4-7"><a href="proceso-de-análisis-de-los-datos.html#cb4-7" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot;DcSegP&quot;</span>,<span class="st">&quot;DcL&quot;</span>,<span class="st">&quot;DcVCS&quot;</span>,</span>
+<span id="cb4-8"><a href="proceso-de-análisis-de-los-datos.html#cb4-8" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot;DcF&quot;</span>,<span class="st">&quot;DcAP&quot;</span>,<span class="st">&quot;DcTP&quot;</span>,</span>
+<span id="cb4-9"><a href="proceso-de-análisis-de-los-datos.html#cb4-9" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot;DcOFM&quot;</span>,<span class="st">&quot;DcFP&quot;</span>,<span class="st">&quot;Dt&quot;</span>,</span>
+<span id="cb4-10"><a href="proceso-de-análisis-de-los-datos.html#cb4-10" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot;DcCBFN&quot;</span>,<span class="st">&quot;DcH&quot;</span>,<span class="st">&quot;Otros&quot;</span>,</span>
+<span id="cb4-11"><a href="proceso-de-análisis-de-los-datos.html#cb4-11" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot;E_18_19&quot;</span>,<span class="st">&quot;E_20_24&quot;</span>,<span class="st">&quot;E_25_29&quot;</span>,</span>
+<span id="cb4-12"><a href="proceso-de-análisis-de-los-datos.html#cb4-12" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot;E_30_34&quot;</span>,<span class="st">&quot;E_35_39&quot;</span>,<span class="st">&quot;E_40_44&quot;</span>,</span>
+<span id="cb4-13"><a href="proceso-de-análisis-de-los-datos.html#cb4-13" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot;E_45_49&quot;</span>,<span class="st">&quot;E_50_59&quot;</span>,<span class="st">&quot;E_60_&quot;</span>)</span>
+<span id="cb4-14"><a href="proceso-de-análisis-de-los-datos.html#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="proceso-de-análisis-de-los-datos.html#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">#View(data0)</span></span>
+<span id="cb4-16"><a href="proceso-de-análisis-de-los-datos.html#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(data0)</span></code></pre></div>
+<pre><code>## # A tibble: 25 x 39
+##    Dep         Pob   NEP   S_F   S_M   SNE  NE_I NE_PC ND_PI NE_SC NE_SI NE_SnUC
+##    &lt;chr&gt;     &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;   &lt;int&gt;
+##  1 AMAZONAS 3.79e5     2    35   824    35     3   139   265   165   184      24
+##  2 ANCASH   1.08e6     2   156  3179     3     3   316   529   834  1164     125
+##  3 APURIMAC 4.06e5     2    61   549    21    NA    65   128   166   168      15
+##  4 AREQUIPA 1.38e6     3   158  2226    48    NA   167   310   693   659     159
+##  5 AYACUCHO 6.16e5     2   192  2347    89     5   284   527   638   733      88
+##  6 CAJAMAR~ 1.34e6     4   107  1867   110     3   341   441   416   399      70
+##  7 CALLAO   9.94e5     1    NA  3199    16     4   196   227   869   990     102
+##  8 CUZCO    1.21e6     3   186  2586    70     3   230   530   801   727      91
+##  9 HUANCAV~ 3.48e5     1     9   191     3    NA    22    39    54    42      17
+## 10 HUANUCO  7.21e5     1   162  2392   145     8   290   643   564   650      57
+## # ... with 15 more rows, and 27 more variables: NE_SnUI &lt;int&gt;, NE_SUC &lt;int&gt;,
+## #   NE_SUI &lt;int&gt;, NE_Pstgr &lt;int&gt;, NE_NAp &lt;int&gt;, DcP &lt;int&gt;, DcSegP &lt;int&gt;,
+## #   DcL &lt;int&gt;, DcVCS &lt;int&gt;, DcF &lt;int&gt;, DcAP &lt;int&gt;, DcTP &lt;int&gt;, DcOFM &lt;int&gt;,
+## #   DcFP &lt;int&gt;, Dt &lt;int&gt;, DcCBFN &lt;int&gt;, DcH &lt;int&gt;, Otros &lt;int&gt;, E_18_19 &lt;int&gt;,
+## #   E_20_24 &lt;int&gt;, E_25_29 &lt;int&gt;, E_30_34 &lt;int&gt;, E_35_39 &lt;int&gt;, E_40_44 &lt;int&gt;,
+## #   E_45_49 &lt;int&gt;, E_50_59 &lt;int&gt;, E_60_ &lt;int&gt;</code></pre>
+</div>
+<div id="eliminar-na" class="section level3" number="5.1.2">
+<h3><span class="header-section-number">5.1.2</span> Eliminar NA</h3>
+<p>Se evalua los Missing Values en la data ya que no deben ser el mayor porcentaje del total.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="proceso-de-análisis-de-los-datos.html#cb6-1" aria-hidden="true" tabindex="-1"></a>data0 <span class="sc">%&gt;%</span> mice<span class="sc">::</span><span class="fu">md.pattern</span>(<span class="at">rotate.names=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<p><img src="BOOK_DELITOS_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre><code>##   Dep Pob NEP DcP DcSegP DcL DcVCS DcF DcAP S_M SNE NE_PC ND_PI NE_SC NE_SI
+## 1   1   1   1   1      1   1     1   1    1   1   1     1     1     1     1
+## 1   1   1   1   1      1   1     1   1    1   1   1     1     1     1     1
+## 1   1   1   1   1      1   1     1   1    1   1   1     1     1     1     1
+## 1   1   1   1   1      1   1     1   1    1   1   1     1     1     1     1
+## 1   1   1   1   1      1   1     1   1    1   1   1     1     1     1     1
+## 2   1   1   1   1      1   1     1   1    1   1   1     1     1     1     1
+## 2   1   1   1   1      1   1     1   1    1   1   1     1     1     1     1
+## 2   1   1   1   1      1   1     1   1    1   1   1     1     1     1     1
+## 2   1   1   1   1      1   1     1   1    1   1   1     1     1     1     1
+## 1   1   1   1   1      1   1     1   1    1   1   1     1     1     1     1
+## 1   1   1   1   1      1   1     1   1    1   1   1     1     1     1     1
+## 1   1   1   1   1      1   1     1   1    1   1   1     1     1     1     1
+## 1   1   1   1   1      1   1     1   1    1   1   1     1     1     1     1
+## 1   1   1   1   1      1   1     1   1    1   1   1     1     1     1     1
+## 1   1   1   1   1      1   1     1   1    1   1   1     1     1     1     1
+## 1   1   1   1   1      1   1     1   1    1   1   1     1     1     1     1
+## 1   1   1   1   1      1   1     1   1    1   1   1     1     1     1     1
+## 1   1   1   1   1      1   1     1   1    1   1   1     1     1     1     1
+## 1   1   1   1   1      1   1     1   1    1   1   1     1     1     1     1
+## 1   1   1   1   1      1   1     1   1    1   1   1     1     1     1     1
+## 1   1   1   1   1      1   1     1   1    1   0   0     0     0     0     0
+##     0   0   0   0      0   0     0   0    0   1   1     1     1     1     1
+##   NE_SnUC NE_SnUI NE_SUC NE_SUI E_18_19 E_20_24 E_25_29 E_30_34 E_35_39 E_40_44
+## 1       1       1      1      1       1       1       1       1       1       1
+## 1       1       1      1      1       1       1       1       1       1       1
+## 1       1       1      1      1       1       1       1       1       1       1
+## 1       1       1      1      1       1       1       1       1       1       1
+## 1       1       1      1      1       1       1       1       1       1       1
+## 2       1       1      1      1       1       1       1       1       1       1
+## 2       1       1      1      1       1       1       1       1       1       1
+## 2       1       1      1      1       1       1       1       1       1       1
+## 2       1       1      1      1       1       1       1       1       1       1
+## 1       1       1      1      1       1       1       1       1       1       1
+## 1       1       1      1      1       1       1       1       1       1       1
+## 1       1       1      1      1       1       1       1       1       1       1
+## 1       1       1      1      1       1       1       1       1       1       1
+## 1       1       1      1      1       1       1       1       1       1       1
+## 1       1       1      1      1       1       1       1       1       1       1
+## 1       1       1      1      1       1       1       1       1       1       1
+## 1       1       1      1      1       1       1       1       1       1       1
+## 1       1       1      1      1       1       1       1       1       1       1
+## 1       1       1      1      1       1       1       1       1       1       1
+## 1       1       1      1      1       1       1       1       1       1       1
+## 1       0       0      0      0       0       0       0       0       0       0
+##         1       1      1      1       1       1       1       1       1       1
+##   E_45_49 E_50_59 E_60_ S_F DcFP NE_I DcTP DcOFM NE_NAp NE_Pstgr Dt Otros
+## 1       1       1     1   1    1    1    1     1      1        1  1     1
+## 1       1       1     1   1    1    1    1     1      1        1  1     1
+## 1       1       1     1   1    1    1    1     1      1        1  1     0
+## 1       1       1     1   1    1    1    1     1      1        1  1     0
+## 1       1       1     1   1    1    1    1     1      1        1  0     0
+## 2       1       1     1   1    1    1    1     1      1        1  0     0
+## 2       1       1     1   1    1    1    1     1      1        0  1     1
+## 2       1       1     1   1    1    1    1     1      1        0  0     0
+## 2       1       1     1   1    1    1    1     1      0        1  1     1
+## 1       1       1     1   1    1    1    1     1      0        1  1     1
+## 1       1       1     1   1    1    1    1     1      0        1  1     0
+## 1       1       1     1   1    1    1    1     1      0        0  1     1
+## 1       1       1     1   1    1    1    1     0      1        1  0     0
+## 1       1       1     1   1    1    1    1     0      1        0  1     1
+## 1       1       1     1   1    1    0    1     1      1        1  1     1
+## 1       1       1     1   1    0    1    0     1      0        1  0     0
+## 1       1       1     1   1    0    0    0     1      0        1  0     0
+## 1       1       1     1   1    0    0    0     0      1        0  0     0
+## 1       1       1     1   0    1    1    1     1      1        1  1     1
+## 1       1       1     1   0    1    1    1     0      1        0  0     0
+## 1       0       0     0   0    1    0    0     1      0        0  1     0
+##         1       1     1   3    3    4    4     4      8        9 10    14
+##   DcCBFN DcH    
+## 1      1   0   1
+## 1      0   0   2
+## 1      1   0   2
+## 1      0   0   3
+## 1      1   1   2
+## 2      0   0   4
+## 2      0   0   3
+## 2      0   0   5
+## 2      1   1   1
+## 1      1   0   2
+## 1      1   0   3
+## 1      0   0   4
+## 1      1   0   4
+## 1      0   0   4
+## 1      1   0   2
+## 1      0   0   7
+## 1      0   0   8
+## 1      0   0   9
+## 1      0   0   3
+## 1      0   0   7
+## 1      0   1  26
+##       16  21 115</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="proceso-de-análisis-de-los-datos.html#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#data0 %&gt;% VIM::aggr(numbers=T, sortVar=T )</span></span></code></pre></div>
+<p>Observando el grafico, se entiende que para la primera fila hay una observacion que tiene NA en la variable DcH en la segunda fila,hay una observacion que tiene NA en DcBFN y DcH, así sucesivamente hasta llegar a la ultima fila, donde una observacion tiene 26 NA, el cual definitivamente se eliminara.</p>
+</div>
+<div id="eliminar-filas" class="section level3" number="5.1.3">
+<h3><span class="header-section-number">5.1.3</span> Eliminar filas</h3>
+<p>Las variables principales que son sustento base de que existen los datos y son reales, vienen a ser cinco, la variable poblacion, establecimientos penitenciarios, mujeres y varones, es por ello que si alguno no tiene datos, procedera a ser eliminado</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="proceso-de-análisis-de-los-datos.html#cb9-1" aria-hidden="true" tabindex="-1"></a>data0 <span class="ot">&lt;-</span> data0[<span class="sc">!</span><span class="fu">is.na</span>(data0<span class="sc">$</span>Pob),]</span>
+<span id="cb9-2"><a href="proceso-de-análisis-de-los-datos.html#cb9-2" aria-hidden="true" tabindex="-1"></a>data0 <span class="ot">&lt;-</span> data0[<span class="sc">!</span><span class="fu">is.na</span>(data0<span class="sc">$</span>NEP),]</span>
+<span id="cb9-3"><a href="proceso-de-análisis-de-los-datos.html#cb9-3" aria-hidden="true" tabindex="-1"></a>data0 <span class="ot">&lt;-</span> data0[<span class="sc">!</span><span class="fu">is.na</span>(data0<span class="sc">$</span>S_F),]</span>
+<span id="cb9-4"><a href="proceso-de-análisis-de-los-datos.html#cb9-4" aria-hidden="true" tabindex="-1"></a>data0 <span class="ot">&lt;-</span> data0[<span class="sc">!</span><span class="fu">is.na</span>(data0<span class="sc">$</span>S_M),]</span>
+<span id="cb9-5"><a href="proceso-de-análisis-de-los-datos.html#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="proceso-de-análisis-de-los-datos.html#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(data0) <span class="sc">%&gt;%</span> <span class="fu">print</span>(<span class="at">n=</span><span class="dv">26</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 22 x 39
+##    Dep         Pob   NEP   S_F   S_M   SNE  NE_I NE_PC ND_PI NE_SC NE_SI NE_SnUC
+##    &lt;chr&gt;     &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;   &lt;int&gt;
+##  1 &quot;AMAZON~ 3.79e5     2    35   824    35     3   139   265   165   184      24
+##  2 &quot;ANCASH&quot; 1.08e6     2   156  3179     3     3   316   529   834  1164     125
+##  3 &quot;APURIM~ 4.06e5     2    61   549    21    NA    65   128   166   168      15
+##  4 &quot;AREQUI~ 1.38e6     3   158  2226    48    NA   167   310   693   659     159
+##  5 &quot;AYACUC~ 6.16e5     2   192  2347    89     5   284   527   638   733      88
+##  6 &quot;CAJAMA~ 1.34e6     4   107  1867   110     3   341   441   416   399      70
+##  7 &quot;CUZCO&quot;  1.21e6     3   186  2586    70     3   230   530   801   727      91
+##  8 &quot;HUANCA~ 3.48e5     1     9   191     3    NA    22    39    54    42      17
+##  9 &quot;HUANUC~ 7.21e5     1   162  2392   145     8   290   643   564   650      57
+## 10 &quot;ICA&quot;    8.51e5     2   302  4971    72     3   312   578  1665  1831     236
+## 11 &quot;JUNIN&quot;  1.25e6     7   180  2861    84    14   320   613   803   840      90
+## 12 &quot;LA LIB~ 1.78e6     2   283  4471   124     9   589   905  1084  1518     154
+## 13 &quot;LAMBAY~ 1.20e6     1   163  3000    94     5   373   548   791   999     103
+## 14 &quot;LIMA&quot;   1.78e7    10  1884 24140   281    29  1740  2873  7452  9391     979
+## 15 &quot;LORETO&quot; 3.69e7     3    74  1172    53     1   136   259   285   351      36
+## 16 &quot;PASCO&quot;  2.53e6     2    14   181     4     1    10    26    81    39       6
+## 17 &quot;PIURA&quot;  3.59e6     1    94  3098    84     1   310   619   805  1000     123
+## 18 &quot;PUNO&quot;   1.17e6     3   190  1597    37     2   200   298   556   403      66
+## 19 &quot;SAN MA~ 8.13e5     4    62  2221    92     6   422   564   398   560      86
+## 20 &quot;TAC &quot;   3.29e5     3   110   992    24     2    75   156   314   335      45
+## 21 &quot;TUMBES&quot; 2.25e5     1    37   823    27    83   156   201   297    23      21
+## 22 &quot;UCAYAL~ 4.96e5     1   104  1949    65     1   207   413   456   690      60
+## # ... with 27 more variables: NE_SnUI &lt;int&gt;, NE_SUC &lt;int&gt;, NE_SUI &lt;int&gt;,
+## #   NE_Pstgr &lt;int&gt;, NE_NAp &lt;int&gt;, DcP &lt;int&gt;, DcSegP &lt;int&gt;, DcL &lt;int&gt;,
+## #   DcVCS &lt;int&gt;, DcF &lt;int&gt;, DcAP &lt;int&gt;, DcTP &lt;int&gt;, DcOFM &lt;int&gt;, DcFP &lt;int&gt;,
+## #   Dt &lt;int&gt;, DcCBFN &lt;int&gt;, DcH &lt;int&gt;, Otros &lt;int&gt;, E_18_19 &lt;int&gt;,
+## #   E_20_24 &lt;int&gt;, E_25_29 &lt;int&gt;, E_30_34 &lt;int&gt;, E_35_39 &lt;int&gt;, E_40_44 &lt;int&gt;,
+## #   E_45_49 &lt;int&gt;, E_50_59 &lt;int&gt;, E_60_ &lt;int&gt;</code></pre>
+<p>Como se observa, la cantidad de departamentos se redujo, se elimino al Callao, Moquegua y Madre de Dios</p>
+</div>
+<div id="eliminar-columnas" class="section level3" number="5.1.4">
+<h3><span class="header-section-number">5.1.4</span> Eliminar columnas</h3>
+<p>Teniendo todos los departamentos con la data principal, se procede a analizar las varibles, teniendo en cuenta que no podemos trabajar con NA,se procedera a eliminar aquellas columnas que la contengan.</p>
+<p>Examinamos cuantos NA tiene cada columna para darnos una idea</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="proceso-de-análisis-de-los-datos.html#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sapply</span>(data0, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x))) <span class="co">#numero de nulos por columnas</span></span></code></pre></div>
+<pre><code>##      Dep      Pob      NEP      S_F      S_M      SNE     NE_I    NE_PC 
+##        0        0        0        0        0        0        3        0 
+##    ND_PI    NE_SC    NE_SI  NE_SnUC  NE_SnUI   NE_SUC   NE_SUI NE_Pstgr 
+##        0        0        0        0        0        0        0        7 
+##   NE_NAp      DcP   DcSegP      DcL    DcVCS      DcF     DcAP     DcTP 
+##        7        0        0        0        0        0        0        3 
+##    DcOFM     DcFP       Dt   DcCBFN      DcH    Otros  E_18_19  E_20_24 
+##        3        3        9       13       19       12        0        0 
+##  E_25_29  E_30_34  E_35_39  E_40_44  E_45_49  E_50_59    E_60_ 
+##        0        0        0        0        0        0        0</code></pre>
+<p>Eliminamos todas las columnas que tienen al menos un NA</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="proceso-de-análisis-de-los-datos.html#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colMeans</span>(<span class="fu">is.na</span>(data0))</span></code></pre></div>
+<pre><code>##       Dep       Pob       NEP       S_F       S_M       SNE      NE_I     NE_PC 
+## 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.1363636 0.0000000 
+##     ND_PI     NE_SC     NE_SI   NE_SnUC   NE_SnUI    NE_SUC    NE_SUI  NE_Pstgr 
+## 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.3181818 
+##    NE_NAp       DcP    DcSegP       DcL     DcVCS       DcF      DcAP      DcTP 
+## 0.3181818 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.1363636 
+##     DcOFM      DcFP        Dt    DcCBFN       DcH     Otros   E_18_19   E_20_24 
+## 0.1363636 0.1363636 0.4090909 0.5909091 0.8636364 0.5454545 0.0000000 0.0000000 
+##   E_25_29   E_30_34   E_35_39   E_40_44   E_45_49   E_50_59     E_60_ 
+## 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="proceso-de-análisis-de-los-datos.html#cb15-1" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> data0[,<span class="sc">-</span><span class="fu">which</span>(<span class="fu">colMeans</span>(<span class="fu">is.na</span>(data0)) <span class="sc">&gt;</span> <span class="dv">0</span>)]</span>
+<span id="cb15-2"><a href="proceso-de-análisis-de-los-datos.html#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(data1) <span class="sc">%&gt;%</span> <span class="fu">print</span>(<span class="at">n=</span><span class="dv">26</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 22 x 29
+##    Dep       Pob   NEP   S_F   S_M   SNE NE_PC ND_PI NE_SC NE_SI NE_SnUC NE_SnUI
+##    &lt;chr&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;   &lt;int&gt;   &lt;int&gt;
+##  1 &quot;AMAZ~ 3.79e5     2    35   824    35   139   265   165   184      24      16
+##  2 &quot;ANCA~ 1.08e6     2   156  3179     3   316   529   834  1164     125      87
+##  3 &quot;APUR~ 4.06e5     2    61   549    21    65   128   166   168      15      13
+##  4 &quot;AREQ~ 1.38e6     3   158  2226    48   167   310   693   659     159     127
+##  5 &quot;AYAC~ 6.16e5     2   192  2347    89   284   527   638   733      88      62
+##  6 &quot;CAJA~ 1.34e6     4   107  1867   110   341   441   416   399      70      44
+##  7 &quot;CUZC~ 1.21e6     3   186  2586    70   230   530   801   727      91     102
+##  8 &quot;HUAN~ 3.48e5     1     9   191     3    22    39    54    42      17       6
+##  9 &quot;HUAN~ 7.21e5     1   162  2392   145   290   643   564   650      57      59
+## 10 &quot;ICA&quot;  8.51e5     2   302  4971    72   312   578  1665  1831     236     233
+## 11 &quot;JUNI~ 1.25e6     7   180  2861    84   320   613   803   840      90      78
+## 12 &quot;LA L~ 1.78e6     2   283  4471   124   589   905  1084  1518     154     159
+## 13 &quot;LAMB~ 1.20e6     1   163  3000    94   373   548   791   999     103      94
+## 14 &quot;LIMA&quot; 1.78e7    10  1884 24140   281  1740  2873  7452  9391     979     962
+## 15 &quot;LORE~ 3.69e7     3    74  1172    53   136   259   285   351      36      38
+## 16 &quot;PASC~ 2.53e6     2    14   181     4    10    26    81    39       6       5
+## 17 &quot;PIUR~ 3.59e6     1    94  3098    84   310   619   805  1000     123     134
+## 18 &quot;PUNO&quot; 1.17e6     3   190  1597    37   200   298   556   403      66      51
+## 19 &quot;SAN ~ 8.13e5     4    62  2221    92   422   564   398   560      86      52
+## 20 &quot;TAC &quot; 3.29e5     3   110   992    24    75   156   314   335      45      35
+## 21 &quot;TUMB~ 2.25e5     1    37   823    27   156   201   297    23      21      11
+## 22 &quot;UCAY~ 4.96e5     1   104  1949    65   207   413   456   690      60      73
+## # ... with 17 more variables: NE_SUC &lt;int&gt;, NE_SUI &lt;int&gt;, DcP &lt;int&gt;,
+## #   DcSegP &lt;int&gt;, DcL &lt;int&gt;, DcVCS &lt;int&gt;, DcF &lt;int&gt;, DcAP &lt;int&gt;, E_18_19 &lt;int&gt;,
+## #   E_20_24 &lt;int&gt;, E_25_29 &lt;int&gt;, E_30_34 &lt;int&gt;, E_35_39 &lt;int&gt;, E_40_44 &lt;int&gt;,
+## #   E_45_49 &lt;int&gt;, E_50_59 &lt;int&gt;, E_60_ &lt;int&gt;</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="proceso-de-análisis-de-los-datos.html#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">#View(data1)</span></span></code></pre></div>
+<p>De 39 variables se eliminaron 10. Ahora verificamos que nuestra data no tenga NA</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="proceso-de-análisis-de-los-datos.html#cb18-1" aria-hidden="true" tabindex="-1"></a>data1 <span class="sc">%&gt;%</span> mice<span class="sc">::</span><span class="fu">md.pattern</span>(<span class="at">rotate.names=</span><span class="cn">TRUE</span>) <span class="co">#verificando que no hay NA</span></span></code></pre></div>
+<pre><code>##  /\     /\
+## {  `---&#39;  }
+## {  O   O  }
+## ==&gt;  V &lt;==  No need for mice. This data set is completely observed.
+##  \  \|/  /
+##   `-----&#39;</code></pre>
+<p><img src="BOOK_DELITOS_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<pre><code>##    Dep Pob NEP S_F S_M SNE NE_PC ND_PI NE_SC NE_SI NE_SnUC NE_SnUI NE_SUC
+## 22   1   1   1   1   1   1     1     1     1     1       1       1      1
+##      0   0   0   0   0   0     0     0     0     0       0       0      0
+##    NE_SUI DcP DcSegP DcL DcVCS DcF DcAP E_18_19 E_20_24 E_25_29 E_30_34 E_35_39
+## 22      1   1      1   1     1   1    1       1       1       1       1       1
+##         0   0      0   0     0   0    0       0       0       0       0       0
+##    E_40_44 E_45_49 E_50_59 E_60_  
+## 22       1       1       1     1 0
+##          0       0       0     0 0</code></pre>
+</div>
+<div id="gráfico-resumen" class="section level3" number="5.1.5">
+<h3><span class="header-section-number">5.1.5</span> Gráfico resumen</h3>
+<p>Mostramos porcentaje de Delitos en todo el Perú, después de la limpieza de datos.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="proceso-de-análisis-de-los-datos.html#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co">#glimpse(data1)</span></span>
+<span id="cb21-2"><a href="proceso-de-análisis-de-los-datos.html#cb21-2" aria-hidden="true" tabindex="-1"></a>total <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">select</span>(data1,<span class="dv">15</span><span class="sc">:</span><span class="dv">20</span>)</span>
+<span id="cb21-3"><a href="proceso-de-análisis-de-los-datos.html#cb21-3" aria-hidden="true" tabindex="-1"></a>suma <span class="ot">&lt;-</span> <span class="fu">colSums</span> (total)</span>
+<span id="cb21-4"><a href="proceso-de-análisis-de-los-datos.html#cb21-4" aria-hidden="true" tabindex="-1"></a>porcent <span class="ot">&lt;-</span> <span class="fu">cbind</span>(suma,<span class="at">prop =</span> <span class="fu">prop.table</span>(suma))<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb21-5"><a href="proceso-de-análisis-de-los-datos.html#cb21-5" aria-hidden="true" tabindex="-1"></a>grafico <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(porcent)</span>
+<span id="cb21-6"><a href="proceso-de-análisis-de-los-datos.html#cb21-6" aria-hidden="true" tabindex="-1"></a>grafico</span></code></pre></div>
+<pre><code>##           suma      prop
+## DcP    3821900 48.259969
+## DcSegP 1784000 22.526959
+## DcL    1354200 17.099780
+## DcVCS   693300  8.754451
+## DcF     164900  2.082228
+## DcAP    101100  1.276612</code></pre>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="proceso-de-análisis-de-los-datos.html#cb23-1" aria-hidden="true" tabindex="-1"></a>etiquetas <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;48.25% DcP&quot;</span>,<span class="st">&quot;22.52% DcSegP&quot;</span>,<span class="st">&quot;17.09% DcL&quot;</span>,<span class="st">&quot;8.75% DcVCS&quot;</span>,<span class="st">&quot;2.08% DcF&quot;</span>,<span class="st">&quot;1.27% DcAP&quot;</span>)</span>
+<span id="cb23-2"><a href="proceso-de-análisis-de-los-datos.html#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="proceso-de-análisis-de-los-datos.html#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">pie</span>(grafico<span class="sc">$</span>prop , <span class="at">col=</span><span class="fu">rainbow</span>(<span class="fu">length</span>(grafico<span class="sc">$</span>prop)), </span>
+<span id="cb23-4"><a href="proceso-de-análisis-de-los-datos.html#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> etiquetas,</span>
+<span id="cb23-5"><a href="proceso-de-análisis-de-los-datos.html#cb23-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">main =</span> <span class="st">&quot;Delitos en Perú&quot;</span>,</span>
+<span id="cb23-6"><a href="proceso-de-análisis-de-los-datos.html#cb23-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">sub =</span> <span class="st">&quot;Evaluación de la cantidad de delitos registrados por tipo.&quot;</span>)</span>
+<span id="cb23-7"><a href="proceso-de-análisis-de-los-datos.html#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-8"><a href="proceso-de-análisis-de-los-datos.html#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&quot;topleft&quot;</span>, </span>
+<span id="cb23-9"><a href="proceso-de-análisis-de-los-datos.html#cb23-9" aria-hidden="true" tabindex="-1"></a>       <span class="fu">c</span>(<span class="st">&quot;D. C. patrominio&quot;</span>,</span>
+<span id="cb23-10"><a href="proceso-de-análisis-de-los-datos.html#cb23-10" aria-hidden="true" tabindex="-1"></a>         <span class="st">&quot;D. C. la seguridad publica&quot;</span>,</span>
+<span id="cb23-11"><a href="proceso-de-análisis-de-los-datos.html#cb23-11" aria-hidden="true" tabindex="-1"></a>         <span class="st">&quot;D. C. la libertad&quot;</span>,</span>
+<span id="cb23-12"><a href="proceso-de-análisis-de-los-datos.html#cb23-12" aria-hidden="true" tabindex="-1"></a>         <span class="st">&quot;D. C. la vida, el cuerpo y la salud&quot;</span>,</span>
+<span id="cb23-13"><a href="proceso-de-análisis-de-los-datos.html#cb23-13" aria-hidden="true" tabindex="-1"></a>         <span class="st">&quot;D. C. la familia&quot;</span>,</span>
+<span id="cb23-14"><a href="proceso-de-análisis-de-los-datos.html#cb23-14" aria-hidden="true" tabindex="-1"></a>         <span class="st">&quot;D. C. la administracion publica&quot;</span>),</span>
+<span id="cb23-15"><a href="proceso-de-análisis-de-los-datos.html#cb23-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">cex =</span> <span class="fl">0.5</span>,</span>
+<span id="cb23-16"><a href="proceso-de-análisis-de-los-datos.html#cb23-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="fu">rainbow</span>(<span class="fu">length</span>(grafico<span class="sc">$</span>prop)))</span></code></pre></div>
+<p><img src="BOOK_DELITOS_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>En el grafico observamos que el Delito contra el patrimonio es el que mas se da a nivel Nacional, seguido por el Delito contra la seguridad publica, estos dos abarcan casi el 70% del total ya que van de la mano, la inseguridad en las calles genera robos, extorsion, etc</p>
+</div>
+</div>
+<div id="análisis-de-componentes-principales" class="section level2" number="5.2">
+<h2><span class="header-section-number">5.2</span> Análisis de Componentes Principales</h2>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="adquisicion-de-datos.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="resultados.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": false,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

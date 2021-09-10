@@ -237,7 +237,234 @@ df03 <- data.frame(conc, date1)
 #Consultamos cual es el valor maximo de concentracion y a su vez nos trae el dato de la hora en que fue tomada
 df03[conc == max(conc),]
 ```
+## Parte 2
 
+
+**1. 1.Graficar los puntos $(1,1),(2,4),(3,6),(4,8),(5,25),(6,36),(7,49),(8,61),(9,81),(10,100)$ en un plano utilizando RStudio.**
+
+```{r}
+a2 <- c(1:10)
+b2 <- c(1,2,6,8,25,36,49,61,81,100)
+plot(a2,b2)
+```
+
+**2. Ingresar la matriz A en RStudio**
+$A = \begin{pmatrix} 1 & 2 & 3 \\ 2 & 4 & 6 \\ 3 & 6 & 9 \\ 4 & 8 & 12  \end{pmatrix}$
+
+```{r}
+a21 <- c(1:4)
+a22 <- a21*2
+a23 <- a21*3
+a24 <- c(a21,a22,a23)
+A <- matrix( a24 ,nrow=4 , ncol =3)
+A
+```
+
+**3. Ingresar la matriz identidad de tamaño 3**
+$I = \begin{pmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1  \end{pmatrix}$
+
+```{r}
+Id <- diag(1, nrow=3)
+I <-Id*3
+I
+```
+
+**4. Crea una función que cree una matriz nula ingresando las dimensiones**
+
+```{r}
+mnula <-  function(a,b){
+  matrix(0, nrow = a , ncol=b)
+}
+mnula(4,4)
+```
+**5. Modificar la matriz `diag(4)`, para que se parezca a la matriz B**
+$B = \begin{pmatrix} 0 & 0 & 0 & 0 \\ 0 & 2 & 0 & 0 \\ 0 & 0 & 3 & 0 \\ 0 & 0 & 0 & 4  \end{pmatrix}$
+
+```{r}
+B <- mnula(4,4)
+B[1,1]=0
+B[2,2]=2
+B[3,3]=3
+B[4,4]=4
+B
+```
+**6. Obtener la matriz transpuesta de A (ejercicio 2)**
+
+```{r}
+t(A)
+```
+
+
+**7. Realizar las siguientes operaciones $A + B$, $A - B$, $3B$ y $AB$**
+
+```{r}
+# dichas opraciones no se pueden realizar ya que las dimensiones de las matrices
+# son diferentes
+#A+B
+#A-B
+#A*B
+3*A
+
+```
+
+
+**8. Crea una función para calcular $P^6$**
+$P = \begin{pmatrix} 1 & 2 & 3 \\ -2 & 4 & -2 \\ 1 & 0 & 1  \end{pmatrix}$
+
+```{r}
+p8 <- function(M,a){
+  b= M ; 
+  for(i in 2:a){
+    b = b %*% M}
+  print(b)
+}
+P <- matrix(c(1,2,3,-2,4,-2,1,0,1),3,3, by = T)
+p8(P,6)
+
+```
+
+**9. Resolver el sistema de ecuaciones**
+$3x - y + z  = -1\\9x - 2y + z = -9\\3x + y - 2z = -9$
+
+```{r}
+k<- matrix(c(3,9,3,-1,-2,1,1,1,-2), ncol=3,nrow=3)
+l <-c(-1,-9,-9)
+solve(k,l)
+```
+
+**10. Utilizando la ayuda de R, investigue para qué sirven las funciones `eigen()` y `det()`**
+
+
+**11. Considerando las matrices**
+
+$$
+
+B= \begin{pmatrix} 
+1 & 2 & 3 & 4 & 5 \\
+2 & 4 & 6 & 8 & 10 \\
+3 & 6 & 9 & 12 & 15 \\
+4 & 8 & 12 & 16 & 20 \\
+5 & 10 & 15 & 20 & 25 \\
+6 & 12 & 18 & 24 & 30 \\
+7 & 14 & 21 & 28 & 35 \\
+8 & 16 & 24 & 32 & 40 \\
+9 & 18 & 27 & 36 & 45 \\
+10 & 20 & 30 & 40 & 50
+\end{pmatrix}
+
+A = \begin{pmatrix}
+  0 & 1 & 0 & 1 & 0 \\
+  1 & 0 & 1 & 0 & 1 \\
+  0 & 1 & 0 & 1 & 0 \\
+  0 & 1 & 0 & 0 & 1 \\
+  1 & 0 & 1 & 1 & 0 \\
+\end{pmatrix}
+
+$$
+
+Calcular $A \cdot B - A B^t$
+
+```{r}
+x  <- c(0,1)
+x1 <-rep(x,7)
+y  <- c(0,0,1)
+y1 <-rep(y,2)
+A <- matrix(c(x1,y1,1,0,1,1,0), ncol=5,nrow = 5 , by = T)
+A
+
+a <- c(1:10)
+b <- a*2
+c <- a*3
+d <- a*4
+e <- a*5
+f <- c(a,b,c,d,e)
+B <- matrix(f, 5 ,10 )
+
+Bt <- t(B)
+Bt
+
+
+```
+
+
+**12. Considere**
+$\hat\beta = (X^t \cdot X)^{-1} \cdot X^t \cdot Y$
+
+Determine la matriz $\hat\beta$
+
+$$
+
+x=\begin{pmatrix}1 & 1\\ 1 & -1\\ 1 & 0\\ 1 & 1\\ 1 & 2\\ \end{pmatrix}
+
+y = \begin{pmatrix}0\\0\\1\\1\\3\\\end{pmatrix}
+
+$$
+```{r}
+x2 <- c(rep(1,5),1,-1,0,1,2)
+x  <- matrix(x2, 5,2)
+x
+
+y <- matrix(c(rep(0,2), rep(1,2) , 3))
+y
+
+```
+
+**13. Corre el siguiente código para cargar los vectores `year` y `co2`**
+
+```{r}
+data(co2)
+means = aggregate(co2, FUN=mean)
+year = as.vector(time(means))
+co2 = as.vector(means)
+```
+- El vector `co2` contiene medidas de $CO_2$ en la atmósfera, en unidades de *ppm*, durante el periodo 1959-1997. El vector `year` contiene sus años correspondientes.
+- Calcular un vector de diferencias de $CO_2$ entre años consecutivos, que sería:
+  - $CO_2$ en 1960 menos $CO_2$  en 1959
+  - $CO_2$ en 1961 menos $CO_2$  en 1960
+  - y así sucesivamente...
+```{r}
+df_co2 <- data.frame(year = year, co2 = co2) %>%
+  mutate(co2_2 = lag(co2), dif_co2 = co2 - co2_2)
+vect_diferencia <- df_co2$dif_co2[2:39]
+vect_diferencia
+```
+- Crear un **plot** con lineas y puntos mostrando las diferencias consecutivas de $CO_2$ en función del tiempo (1960, 1961, etc...), en **negrita**
+- La diferencia de concentración de $CO_2$ entre 2020 y 2019 fue igual a 2.64. Agregar un punto rojo representando esa diferencia al plot ya creado (usar una forma diferente, como `pch=4`)
+
+```{r}
+plot(x = df_co2$year[2:39], y = vect_diferencia, xlab = "Año", ylab = "Variación de CO2",
+     main = "Diferencia de CO2 & tiempo", type = "o", pch = 16)
+```
+```{r}
+plot(x = df_co2$year[2:39], y = vect_diferencia, xlab = "Años", ylab = "Variación de CO2",
+     main = "Diferencia de CO2 & tiempo", type = "o", pch = 16, xlim = c(1960,2020),
+     ylim = c(0,3))
+points(2020, 2.64, pch = 4, col = "red")
+```
+
+**14. **
+
+- Lee el archivo `rainfall.csv` como un `data.frame`
+
+
+
+```{r}
+data_R <- read.csv("rainfall.csv")
+head(data_R)
+
+```
+
+- Calcula e imprime un vector con los nombres de las estaciones donde al menos uno de los meses tiene una precipitación superior a 180mm.
+
+```{r}
+names_est <- dplyr::select(data_R, sep:apr, name) %>% 
+ dplyr::filter(sep > 180 | oct > 180 | nov > 180 | dec > 180 |
+                 jan > 180 | feb > 180 |mar >180) %>%
+  dplyr::select(name)
+names_est <- as.vector(names_est$name)
+names_est
+
+```
 
 ## Parte 3
 

@@ -1,0 +1,12 @@
+On branch master
+Your branch and 'origin/master' have diverged,
+and have 3 and 2 different commits each, respectively.
+  (use "git pull" to merge the remote branch into yours)
+
+All conflicts fixed but you are still merging.
+  (use "git commit" to conclude merge)
+
+Changes to be committed:
+        modified:   resolucion_PARCIAL.Rmd
+        new file:   resolucion_PARCIAL.html
+        modified:   resolucion_PARCIAL.md

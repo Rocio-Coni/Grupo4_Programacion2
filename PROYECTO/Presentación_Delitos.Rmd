@@ -1,0 +1,63 @@
+---
+title: "***Delitos - Analisis de datos***"
+author: 
+- "*1. Chavez Chipana Joel*"
+- "*2. Coba Bautista Kevin Dany*"
+- "*3. Conislla Huamanyalli Rocio*"
+- "*4. Silvestre Jimenez Brenda Pamela*"
+- "*5. Tuanama Satalaya Pierina Isabel*"
+date: "30/8/2021"
+output: 
+  ioslides_presentation: 
+    template: quarterly-report.html
+    logo: logo.png
+    highlight: espresso
+    smaller: yes
+---
+
+## *PRESENTACIÓN*
+
+<div class="red2">
+Análisis de Delitos en R
+</div>
+
+El siguiente trabajo se basa en  análisis de componentes principales, el cual es una técnica que se usó para describir nuestro conjunto de datos criminalísticos en términos de nuevas variables o componentes Los componentes se ordenan por la cantidad de varianza original que describen, por lo que la técnica es útil para reducir la dimensionalidad de un conjunto de datos.
+
+<img src="delincuencia.jpg" alt="alt text" width="500" center/>
+
+## *INTRODUCCIÓN*
+
+La inseguridad ciudadana en nuestro país es, lamentablemente, un problema grave, complejo y aparentemente crónico, sobre el cual, ahora todos comentamos, opinamos, criticamos, pero que realmente, muy pocos conocemos y participamos proactivamente; y es asi que vemos con temor como este fenómeno social sigue permanentemente afectando la paz y tranquilidad de los peruanos y más aún, condenando el desarrollo y bienestar nacional.
+
+La inseguridad ciudadana surge como un fenómeno y problema social en la actualidad, en sociedades como la peruana, que poseen un diverso nivel de desarrollo económico, múltiples rasgos culturales y regímenes políticos de distinto signo, no pudiéndose establecer, por tanto, distinciones simplistas para caracterizar factores asociados a su incremento y formas de expresión.
+
+##
+Una de las formas que podemos realizar para contemplar la correlación existente entre las variables más importantes sobre inseguridad ciudadana es la técnica llamada análisis de componentes principales (PCA), la cual nos permite pasar nuestras variables descargadas de la página DATACRIM, que es el sistema integrado de  estadísticas de la criminalidad y seguridad ciudadana, que maneja datos provistos por el INEI y la Policía Nacional del Perú.
+
+El PCA nos permite pasar nuestras variables que están correlacionadas, a pocas componentes principales, de este modo, con unas pocas combinaciones lineales, que serán las componentes principales, sería suficiente para entender la información contenida en nuestros datos.
+
+Al mismo tiempo, la forma en que se construyen las componentes, y su relación con unas u otras de las variables originales, sirven para entender la estructura de correlación inherente a los datos. Por último, las componentes principales, que forman un vector aleatorio de dimensión menor, pueden ser empleadas en análisis estadísticos posteriores
+
+## *OBJETIVOS*
+
+•	Transformar el conjunto de variables de criminalidad (variables originales) en un nuevo conjunto de variables (componentes principales), incorrelacionadas entre sí.
+
+•	Facilitar la interpretación de la data de criminalística, para que pueda ser utilizado en investigaciones futuras.
+
+•	Clusterizar y encontrar diferencias entre nuestras variables 
+
+## *ADQUISICIÓN DE DATOS*
+
+## *PROCESO DE ANÁLISIS DE LOS DATOS*
+Para el presente análisis usamos la data descargada anteriormente, las cuales exploraremos y ordenaremos adecuadamente dichos datos.
+
+**Importamos los datos**
+
+Cargamos los datos crudos y visualizamos los datos en desorden, y con valores NA, las cuales limpiamos y tranformamos.
+```{r error=TRUE}
+data0 <- read.csv("DEPARTAMENTOS.csv", sep = ";")
+head(data0)
+# saveRDS(data0, file = "data0RDS.RDS")
+```
+
+
