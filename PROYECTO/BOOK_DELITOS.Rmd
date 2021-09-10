@@ -38,6 +38,14 @@ Al mismo tiempo, la forma en que se construyen las componentes, y su relación c
 
 
 # ADQUISICION DE DATOS
+## Fuente de Data
+![Fuente: INEI](DataCRIM.png)
+Para la realización del siguiente proyecto se indago sobre delitos, para ellos atreves de la pagina de INEI se sustrajo información sobre Delitos a nivel de regiones, en esta información se trabajo con los delitos totales atreves de las penitenciarias y en el rango de año 2011-2019.
+
+
+## Descripción Variables
+![Fuente: Elaboracion Propia](DescripcionVariable.png)
+
 # PROCESO DE ANÁLISIS DE LOS DATOS
 ## Análisis Exploratorio de Datos
 Para el presente análisis usamos la data descargada anteriormente, las cuales exploraremos y ordenaremos adecuadamente dichos datos.
