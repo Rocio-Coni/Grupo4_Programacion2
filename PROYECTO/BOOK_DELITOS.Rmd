@@ -16,7 +16,10 @@ link-citations: yes
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-pacman::p_load(tidyverse)
+pacman::p_load(tidyverse, psych, PerformanceAnalytics, GGally, rgl, DT,
+               lattice, cptcity, ade4, factoextra, cluster, corrplot,
+               NbClust, LICORS, clusterSim, clValid, kableExtra, ggdark,
+               mice , VIM , reshape2)
 ```
 # PRESENTACIÓN
 El siguiente trabajo se basa en  análisis de componentes principales, el cual es una técnica que se usó para describir nuestro conjunto de datos criminalísticos en términos de nuevas variables o componentes Los componentes se ordenan por la cantidad de varianza original que describen, por lo que la técnica es útil para reducir la dimensionalidad de un conjunto de datos.
@@ -53,7 +56,7 @@ Para el presente análisis usamos la data descargada anteriormente, las cuales e
 ### Importamos los datos
 Cargamos los datos crudos y visualizamos los datos en desorden, y con valores NA, las cuales limpiamos y tranformamos.
 ```{r error=TRUE}
-data0 <- read.csv("DEPARTAMENTOS.csv", sep = ";")
+data0 <- read.csv("DEPARTAMENTOS (1) - copia.csv", sep = ";")
 tibble(data0)
 # saveRDS(data0, file = "data0RDS.RDS")
 ```
@@ -155,8 +158,273 @@ legend("topleft",
        fill = rainbow(length(grafico$prop)))
 ```
 
-
 En el grafico observamos que el Delito contra el patrimonio es el que mas se da a nivel Nacional, seguido por el Delito contra la seguridad publica, estos dos abarcan casi el 70% del total ya que van de la mano, la inseguridad en las calles genera robos, extorsion, etc
+
+Mostramos porcentaje del nivel de educaciòn 
+
+```{r}
+educacion <- dplyr::select(data1,6:14)
+tot <- colSums(educacion)
+perEDUC<- (cbind(tot,percent = prop.table(tot))*100) %>% 
+  data.frame() %>% summarise(etiquet = c ("SNE",
+                                          "NE_PC",
+                                          "NE_PI",
+                                          "NE_SC",
+                                          "NE_SI",
+                                          "NE_SnUC",
+                                          "NE_SnIU",
+                                          "NE_SUC",
+                                          "NE_SUI"),
+                             percent=round(percent,2),
+                             total = tot, 
+                             leyd = sprintf("%1s( %1s)" ,etiquet, percent))
+pie(perEDUC$percent , col=rainbow(length(perEDUC$percent)), 
+    labels = perEDUC$leyd,
+    main = "Delitos en Perú segùn nivel de estudio",
+    sub = "Evaluación según nivel de estudio")
+legend("topleft", 
+       perEDUC$etiquet,
+       cex = 0.5,
+       fill = rainbow(length(perEDUC$percent)))
+```
+En el grafico observamos que el nivel de estudio en el que se comete mas delitos son aquellas personas con secundaria incompleta (32.26%) , seguido de las personas con secundaria completa(27.45 %), mientras que el mas bajo son aquel grupo sin nivel de educaciòn.
+
+Mostramos los datos segun rango de edad
+
+```{r}
+edades <- dplyr::select(data1, 21:28)
+totale <- edades %>% colSums()
+
+perEDAD<- (cbind(totale,percent = prop.table(totale))*100) %>% 
+  data.frame() %>% summarise(etiquet = c ("E_18_19",
+                                          "E_20_24",
+                                          "E_25_29",
+                                          "E_30_34",
+                                          "E_35_39",
+                                          "E_40_44",
+                                          "E_45_49",
+                                          "E_50_59"),
+                             percent=round(percent,2),
+                             total = totale, 
+                             leyd = sprintf("%1s( %1s)" ,etiquet, percent))
+pie(perEDAD$percent , col=rainbow(length(perEDAD$percent)), 
+    labels = perEDAD$leyd,
+    main = "Delitos en Perú segùn rango de edad",
+    sub = "Evaluación según rango de edad")
+legend("topleft", 
+       perEDAD$etiquet,
+       cex = 0.5,
+       fill = rainbow(length(perEDAD$percent)))
+```
+
+En el grafico observamos que los rangos de edades en los que se comete màs delitos son los comprendidos entre 25 y 29 años con 18.83%, seguido de las edades comprendidas entre 30 y 34 años, mientras que el porcentaje mas bajo con 1.6% son el grupo comprendido entre los 18-19 años .
+
+### Anlizando las variables
+
+Analizemos segun sexo
+```{r message=FALSE, warning=FALSE}
+sexo <- dplyr::select(data1,1,4:5)
+ki<- melt(sexo)
+ggplot(data = ki , mapping = aes(x = Dep, y= value , fill= variable))+
+  geom_col(position="dodge")+ # el valor de la observacion es el de la barra
+  labs(title = "Comparaciòn por sexo",
+       x = "Departamento",
+       y = "valor")+
+  theme(axis.text.x = element_text(angle = 20, size = 6,hjust = 1, vjust = 1))
+```
+En el gràfico podemos observar que el numero de varones es mucho mayor que las mujeres en todos los departamentos. 
+
+Tipo de delito 
+
+```{r message=FALSE, warning=FALSE}
+delit<- data1 %>% dplyr::select(1,15:20) %>% 
+    pivot_longer(-Dep, names_to = "delitos", values_to = "Valor") %>% 
+  group_by(delitos) %>% 
+  summarise(delitos,Valor, Dep)
+ggplot(delit , mapping = aes( x = delitos , y = Valor , fill = delitos))+
+  stat_boxplot(geom = "errorbar", # Error bars
+               width = 0.25) +    # Bars width
+  geom_boxplot(alpha = 0.8,          # Transparencia
+               colour = "#474747",   # Color del borde
+               outlier.colour = 1)+
+  ggtitle ("Evaluacion de delitos \nSegun el tipo de delito")+
+  theme(panel.background = element_rect(fill = "beige"),
+        plot.title = element_text(family="Comic Sans MS",
+                                  size=rel(2), #Tamaño relativo de la letra del título
+                                  vjust=2, #Justificación vertical, para separarlo del gráfico
+                                  face="bold", #Letra negrilla. Otras posibilidades "plain", "italic", "bold" y "bold.italic"
+                                  color="blue", #Color del texto
+                                  lineheight=1.5))+
+  scale_fill_hue(labels =c("D. C. la administracion publica",
+                               "D. C. la familia",
+                               "D. C. la libertad",
+                               "D. C. patrominio",
+                               "D. C. la seguridad publica",
+                               "D. C. la vida, el cuerpo y la salud"))
+
+ggplot(delit, mapping = aes(x = Valor)) +
+  geom_histogram( aes(fill = delitos)) +
+  labs(title = "Distribuciòn de delitos segùn tipo",
+       y = "Tipo de delito") +
+facet_grid(vars(delitos))
+
+```
+
+
+
+Nivel de Educaciòn
+```{r message=FALSE, warning=FALSE}
+educ<- data1 %>% dplyr::select(1,6:14) %>% 
+  pivot_longer(-Dep, names_to = "N.educ", values_to = "Valor") %>% 
+  group_by(N.educ) %>% 
+  summarise(N.educ,Valor, Dep)
+
+  ggplot( educ, mapping = aes( x = N.educ , y = Valor , fill = N.educ))+
+  stat_boxplot(geom = "errorbar",
+               width = 0.25) + 
+  geom_boxplot(alpha = 0.8,          # Transparencia
+               colour = "#474747",   # Color del borde
+               outlier.colour = 1) + # Color atípicos
+  theme(
+    panel.background = element_rect(fill = "beige")
+  )
+
+ggplot(educ, mapping = aes(x = Valor)) +
+  geom_histogram( aes(fill = N.educ)) +
+  labs(title = "Distribuciòn de delitos segùn nivel de educaciòn",
+       y = "Nivel de educaciòn") +
+facet_grid(vars(N.educ))
+
+```
+
+Analicemos la edad
+
+```{r message=FALSE, warning=FALSE}
+edad1 <-data1 %>% dplyr::select(1,21:28) %>%
+  pivot_longer(-Dep, names_to = "edad", values_to = "Valor") %>% 
+  group_by(edad) %>% 
+  summarise(edad,Valor, Dep) 
+
+  ggplot(edad1, mapping = aes( x = edad , y = Valor , fill = edad))+
+  stat_boxplot(geom = "errorbar",
+               width = 0.25) + 
+  geom_boxplot(alpha = 0.8,          # Transparencia
+               colour = "#474747",   # Color del borde
+               outlier.colour = 1) + 
+  ggtitle ("Evaluacion de delitos \nSegun grupo de edad")+# Color atípicos
+  theme(
+    panel.background = element_rect(fill = "beige"),
+    plot.title = element_text(family="Comic Sans MS",
+                              size=rel(2), #Tamaño relativo de la letra del título
+                              vjust=2, #Justificación vertical, para separarlo del gráfico
+                              face="bold", #Letra negrilla. Otras posibilidades "plain", "italic", "bold" y "bold.italic"
+                              color="blue", #Color del texto
+                              lineheight=1.5)
+  )
+ggplot(edad1, mapping = aes(x = Valor)) +
+  geom_histogram( aes(fill = edad)) +
+  labs(title = "Distribuciòn de delitos segùn grupo de edad",
+       y = "Grupo de edad") +
+facet_grid(vars(edad))
+
+```
+
+**Analicemos la data sin Lima** 
+
+```{r}
+data2 <- data1[-14,]
+```
+
+Tipos de delitos
+
+```{r}
+delit2<- data2 %>% dplyr::select(1,15:20) %>% 
+    pivot_longer(-Dep, names_to = "delitos", values_to = "Valor") %>% 
+  group_by(delitos) %>% 
+  summarise(delitos,Valor, Dep)
+ggplot(delit2 , mapping = aes( x = delitos , y = Valor , fill = delitos))+
+  stat_boxplot(geom = "errorbar", # Error bars
+               width = 0.25) +    # Bars width
+  geom_boxplot(alpha = 0.8,          # Transparencia
+               colour = "#474747",   # Color del borde
+               outlier.colour = 1)+
+  ggtitle ("Evaluacion de delitos \nSegun el tipo de delito")+
+  theme(panel.background = element_rect(fill = "beige"),
+        plot.title = element_text(family="Comic Sans MS",
+                                  size=rel(2), #Tamaño relativo de la letra del título
+                                  vjust=2, #Justificación vertical, para separarlo del gráfico
+                                  face="bold", #Letra negrilla. Otras posibilidades "plain", "italic", "bold" y "bold.italic"
+                                  color="blue", #Color del texto
+                                  lineheight=1.5))+
+  scale_fill_hue(labels =c("D. C. la administracion publica",
+                               "D. C. la familia",
+                               "D. C. la libertad",
+                               "D. C. patrominio",
+                               "D. C. la seguridad publica",
+                               "D. C. la vida, el cuerpo y la salud"))
+
+ggplot(delit2, mapping = aes(x = Valor)) +
+  geom_histogram( aes(fill = delitos)) +
+  labs(title = "Distribuciòn de delitos segùn tipo",
+       y = "Tipo de delito") +
+facet_grid(vars(delitos))
+```
+Nivel de Educaciòn
+```{r message=FALSE, warning=FALSE}
+educ2<- data2 %>% dplyr::select(1,6:14) %>% 
+  pivot_longer(-Dep, names_to = "N.educ", values_to = "Valor") %>% 
+  group_by(N.educ) %>% 
+  summarise(N.educ,Valor, Dep)
+
+  ggplot( educ2, mapping = aes( x = N.educ , y = Valor , fill = N.educ))+
+  stat_boxplot(geom = "errorbar",
+               width = 0.25) + 
+  geom_boxplot(alpha = 0.8,          # Transparencia
+               colour = "#474747",   # Color del borde
+               outlier.colour = 1) + # Color atípicos
+  theme(
+    panel.background = element_rect(fill = "beige")
+  )
+
+ggplot(educ2, mapping = aes(x = Valor)) +
+  geom_histogram( aes(fill = N.educ)) +
+  labs(title = "Distribuciòn de delitos segùn nivel de educaciòn",
+       y = "Nivel de educaciòn") +
+facet_grid(vars(N.educ))
+
+```
+
+Analicemos la edad
+
+```{r message=FALSE, warning=FALSE}
+edad2 <-data2 %>% dplyr::select(1,21:28) %>%
+  pivot_longer(-Dep, names_to = "edad", values_to = "Valor") %>% 
+  group_by(edad) %>% 
+  summarise(edad,Valor, Dep) 
+
+  ggplot(edad2, mapping = aes( x = edad , y = Valor , fill = edad))+
+  stat_boxplot(geom = "errorbar",
+               width = 0.25) + 
+  geom_boxplot(alpha = 0.8,          # Transparencia
+               colour = "#474747",   # Color del borde
+               outlier.colour = 1) + 
+  ggtitle ("Evaluacion de delitos \nSegun grupo de edad")+# Color atípicos
+  theme(
+    panel.background = element_rect(fill = "beige"),
+    plot.title = element_text(family="Comic Sans MS",
+                              size=rel(2), #Tamaño relativo de la letra del título
+                              vjust=2, #Justificación vertical, para separarlo del gráfico
+                              face="bold", #Letra negrilla. Otras posibilidades "plain", "italic", "bold" y "bold.italic"
+                              color="blue", #Color del texto
+                              lineheight=1.5)
+  )
+ggplot(edad2, mapping = aes(x = Valor)) +
+  geom_histogram( aes(fill = edad)) +
+  labs(title = "Dsitribuciòn de delitos segùn rango de edad",
+       y = "Grupo de edad") +
+facet_grid(vars(edad))
+
+```
 
 ## Análisis de Componentes Principales
 # RESULTADOS
