@@ -19,7 +19,7 @@ knitr::opts_chunk$set(echo = TRUE)
 pacman::p_load(tidyverse, psych, PerformanceAnalytics, GGally, rgl, DT,
                lattice, cptcity, ade4, factoextra, cluster, corrplot,
                NbClust, LICORS, clusterSim, clValid, kableExtra, ggdark,
-               mice , VIM , reshape2)
+               mice , VIM , reshape2 ,sf)
 ```
 # PRESENTACIÓN
 El siguiente trabajo se basa en  análisis de componentes principales, el cual es una técnica que se usó para describir nuestro conjunto de datos criminalísticos en términos de nuevas variables o componentes Los componentes se ordenan por la cantidad de varianza original que describen, por lo que la técnica es útil para reducir la dimensionalidad de un conjunto de datos.
@@ -271,6 +271,10 @@ facet_grid(vars(delitos))
 
 ```
 
+En este grafico de cajas podemos observar que, la caja que representa al número de personas que cometen el delito contra el patrimonio (color celeste) es mayor que el de los otros delitos, a este tipo de delito le sigue el delito contra la familia y el delito contra la seguridad pública, la mediana se muestra en el centro, lo que indica que hay simetría en la distribución de número de personas, notamos también un valor atípico extremo muy alejado en la caja que representa al delito contra el patrimonio, lo que indicaría que en un momento dado, el número de personas que cometieron el delito contra el patrimonio supero los 12000, lo que nos indica que se trata de la provincia de Lima.
+En esta grafica podemos notar que el delito que presenta mayor distribución en número de veces que los cometen es el delito contra el patrimonio, que es el delito que atenta contra los bienes de una persona.
+La distribución de los delitos contra la administración pública y delitos contra la familia se muestra como un delito cometido pocas veces. 
+
 
 
 Nivel de Educaciòn
@@ -297,6 +301,9 @@ ggplot(educ, mapping = aes(x = Valor)) +
 facet_grid(vars(N.educ))
 
 ```
+
+En la gráfica podemos apreciar el nivel de educación de las personas que han cometido los distintos tipos de delitos, siendo el rango de las personas con secundaria incompleta (color verde) las que se han vistos involucrados en delitos más que en los demás niveles de educación, seguido de las personas con secundaria completa y personas con primaria incompleta.
+Podemos apreciar que la población que cuenta con un nivel educativo de secundaria incompleta tiene mayor distribución en cuanto a número de delitos cometidos, seguido de personas con un nivel educativo de secundaria completa y primaria incompleta.
 
 Analicemos la edad
 
@@ -329,6 +336,9 @@ ggplot(edad1, mapping = aes(x = Valor)) +
 facet_grid(vars(edad))
 
 ```
+En la gráfica se muestra el número de delitos cometidos y su relación con el grupo etario notando que el grupo que comete más delitos es el que se encuentra en el rango de 25 a 29 años, seguido de las personas que se encuentran entre los 30 a 34 años, y los que tienen de 20 a 24 años.
+La distribución de los delitos según el grupo etario nos permite corroborar lo dicho en el grafico anterior, el grupo que se encuentra entre los 30 a 34 años tienen datos distribuidos a lo largo del eje de números de delitos  
+
 
 **Analicemos la data sin Lima** 
 
@@ -370,6 +380,11 @@ ggplot(delit2, mapping = aes(x = Valor)) +
        y = "Tipo de delito") +
 facet_grid(vars(delitos))
 ```
+
+En este grafico se evalua los delitos según su tipo, sin considerar a Lima, lo cual nos indica que el mayor rango lo tiene el delito contra el patrimonio, esta vez el valor atípico no se muestra muy distante y no llega a pasar de los 4000 delitos.
+
+En la gráfica apreciamos que los datos del delito contra el patrimonio es mayor están más distribuidos que cualquier otro delito, seguido del delito de seguridad pública.
+
 Nivel de Educaciòn
 
 ```{r message=FALSE, warning=FALSE}
@@ -395,6 +410,11 @@ ggplot(educ2, mapping = aes(x = Valor)) +
 facet_grid(vars(N.educ))
 
 ```
+
+Según este gráfico, podemos apreciar que el rango de delitos es mayor en la población que tiene secundaria completa con la mediana que nos indica una simetría entre los datos recogidos, también están el grupo que tiene un nivel educativo de secundaria incompleta.
+
+En la gráfica presentada vemos que el grupo con un nivel educativo de secundaria incompleta se muestra más distribuido a lo largo del eje de números de delitos seguido de los que tienen un nivel educativo de secundaria completa.
+
 
 Analicemos la edad
 
@@ -427,6 +447,10 @@ ggplot(edad2, mapping = aes(x = Valor)) +
 facet_grid(vars(edad))
 
 ```
+Sin contar a Lima podemos notar que el rango intercuartlico es más apreciable en todos los grupos etarios siendo los más resaltantes las personas que se encuentra entre los 25 a 29 años y los de 30 a 34 años, la mediana se sitúa casi en el centro de la caja por lo que podríamos decir que la distribución es simétrica.
+
+En la gráfica presentada vemos que el grupo etario que se muestra más distribuido a lo largo del eje de números de delitos son los que están entre los 25 a 29 años seguidos de los que tienen entre 20 a 24 años, lo que indicaría que los delitos cometidos por ambos grupos etarios sobrepasan los 1000 delitos
+
 
 ## Análisis de Componentes Principales
 
@@ -821,7 +845,141 @@ factoextra::fviz_silhouette(sil3)+
 ```
 
 # RESULTADOS
-# DISCUSION DE RESULTADOS
+
+A continuación mostramos los clusters generados anteriormente con cada uno de los métodos en nuestras data limpia que se generó antes del proceso de Análisis Componentes Principales.
+
+## Método Jerárquico
+
+En primer lugar mostramos los resultados obtenidos del método jerárquico, para ello trabajamos con nuestros datas originales que pasaron por el análisis exploratorio de datos, la cual estandarizamos y añadimos los resultados de los clusters como se observa a continuación.
+
+```{r}
+dat_sc <- scale(data2)
+dat_sc <- as.data.frame(dat_sc)
+dat_sc$Cluster_hc <-  as.factor(output_hc$cluster)
+```
+
+Así mismo generamos un nuevo data frame que nos muestra las caracteristicas de nuestros observaciones agrupadas en los clusters indicados.
+
+```{r}
+dat_sc$Cluster_hc <- factor(dat_sc$Cluster_hc)
+dat_hc <- gather(dat_sc, Caracteristica, Valor, Pob:E_60_, factor_key = T)
+head(dat_hc)
+```
+
+Ploteamos los datos anteriomente tratada, lo cual se presenta a continuación.
+
+```{r}
+ggplot(dat_hc, aes(as.factor(x = Caracteristica), y = Valor,
+                      group=Cluster_hc, colour = Cluster_hc)) + 
+  stat_summary(fun = mean, geom="pointrange", size = 1)+
+  stat_summary(geom="line")+
+  geom_point(aes(shape=Cluster_hc))
+```
+
+Observamos de la gráficaa anterior en la que se muestra las caracteristicas de nuestras observaciones como por ejemplo, la variable población se tiene en mayor cantidad para el cluster 3, cabe recalcar que los puntos resaltantes son la media de los individuos dentro del cluster, de esa manera podemos caracterizar los siguientes cluster.
+
+Asimismo, vamos a mostrar nuestros datos espacializados, ya que estamos trabajando con los departamentos del Perú, para ello primero añadimos los datos vectoriales.
+
+```{r message=FALSE}
+dep <- st_read("Regiones/Base Regional.shp")
+dep <- dep %>% 
+  dplyr::select(-c("FIRST_IDDP", "HECTARES", "COUNT"))
+dep1 <- dep[!(dep$NOMBDEP %in% c("CALLAO", "LIMA", "MADRE DE DIOS", 
+                                 "MOQUEGUA")), ]
+
+dat_sc$NOMBDEP <- row.names(dat_sc)
+names(dat_sc)[names(dat_sc)=="Dep"] <- "NOMBDEP"
+
+df_hc_map <- dplyr::full_join(dep1, dat_sc, by = "NOMBDEP")
+
+mapview::mapview(df_hc_map[30])
+```
+
+## Método K-means
+
+Ahora pasamos a mostrar los resultados obtenidos con el método de clusterización K-means siguiendo el mismo procedimiento detallado anteriormente.
+
+```{r}
+dat_sc2 <- scale(data2)
+dat_sc2 <- as.data.frame(dat_sc2)
+dat_sc2$Cluster_km <- as.factor(model$cluster)
+```
+
+Así mismo generamos un nuevo data frame que nos muestra las caracteristicas de nuestros observaciones agrupadas en los clusters indicados.
+
+```{r}
+dat_sc2$Cluster_km <- factor(dat_sc2$Cluster_km)
+dat_km <- gather(dat_sc2, Caracteristica, Valor, Pob:E_60_, 
+                 factor_key = T)
+head(dat_km)
+```
+
+Ploteamos los datos anteriomente tratada, lo cual se presenta a continuación.
+
+```{r}
+ggplot(dat_km, aes(as.factor(x = Caracteristica), y = Valor,
+                      group=Cluster_km, colour = Cluster_km)) + 
+  stat_summary(fun = mean, geom="pointrange", size = 1)+
+  stat_summary(geom="line")+
+  geom_point(aes(shape=Cluster_km))
+```
+
+Como en el resultado mostrado anteriormente tenemos la misma caracterización de los cluster generados.
+
+Asimismo, vamos a mostrar nuestros datos espacializados, ya que estamos trabajando con los departamentos del Perú, para ello primero añadimos los datos vectoriales.
+
+```{r message=FALSE}
+dat_sc2$NOMBDEP <- row.names(dat_sc2)
+names(dat_sc2)[names(dat_sc2)=="Dep"] <- "NOMBDEP"
+
+df_km_map <- dplyr::full_join(dep1, dat_sc2, by = "NOMBDEP")
+
+mapview::mapview(df_km_map[30])
+```
+
+## Método K-means++
+
+Ahora pasamos a mostrar los resultados obtenidos con el método de clusterización K-means++ siguiendo el mismo procedimiento detallado anteriormente.
+
+```{r}
+dat_sc3 <- scale(data2)
+dat_sc3 <- as.data.frame(dat_sc3)
+dat_sc3$Cluster_kpp <- as.factor(model2$cluster)
+```
+
+Así mismo generamos un nuevo data frame que nos muestra las caracteristicas de nuestros observaciones agrupadas en los clusters indicados.
+
+```{r}
+dat_sc3$Cluster_kpp <- factor(dat_sc3$Cluster_kpp)
+dat_kpp <- gather(dat_sc3, Caracteristica, Valor, Pob:E_60_, 
+                 factor_key = T)
+head(dat_kpp)
+```
+
+Ploteamos los datos anteriomente tratada, lo cual se presenta a continuación.
+
+```{r}
+ggplot(dat_kpp, aes(as.factor(x = Caracteristica), y = Valor,
+                      group=Cluster_kpp, colour = Cluster_kpp)) + 
+  stat_summary(fun = mean, geom="pointrange", size = 1)+
+  stat_summary(geom="line")+
+  geom_point(aes(shape=Cluster_kpp))
+```
+
+Como en el resultado mostrado anteriormente tenemos la misma caracterización de los cluster generados.
+
+Asimismo, vamos a mostrar nuestros datos espacializados, ya que estamos trabajando con los departamentos del Perú, para ello primero añadimos los datos vectoriales.
+
+```{r message=FALSE}
+dat_sc3$NOMBDEP <- row.names(dat_sc3)
+names(dat_sc3)[names(dat_sc3)=="Dep"] <- "NOMBDEP"
+
+df_kpp_map <- dplyr::full_join(dep1, dat_sc2, by = "NOMBDEP")
+
+mapview::mapview(df_kpp_map[30])
+```
+
+
 # CONCLUSIONES
 # RECOMENDACIONES
 # BIBLIOGRAFIA
