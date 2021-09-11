@@ -57,7 +57,7 @@ Para el presente análisis usamos la data descargada anteriormente, las cuales e
 Cargamos los datos crudos y visualizamos los datos en desorden, y con valores NA, las cuales limpiamos y tranformamos.
 ```{r error=TRUE}
 data0 <- read.csv("DEPARTAMENTOS (1) - copia.csv", sep = ";")
-tibble(data0)
+DT::datatable(data0)
 # saveRDS(data0, file = "data0RDS.RDS")
 ```
 
@@ -192,7 +192,7 @@ En el grafico observamos que el nivel de estudio en el que se comete mas delitos
 Mostramos los datos segun rango de edad
 
 ```{r}
-edades <- dplyr::select(data1, 21:28)
+edades <- dplyr::select(data1, 21:29)
 totale <- edades %>% colSums()
 
 perEDAD<- (cbind(totale,percent = prop.table(totale))*100) %>% 
@@ -203,7 +203,8 @@ perEDAD<- (cbind(totale,percent = prop.table(totale))*100) %>%
                                           "E_35_39",
                                           "E_40_44",
                                           "E_45_49",
-                                          "E_50_59"),
+                                          "E_50_59",
+                                          "E_60_"),
                              percent=round(percent,2),
                              total = totale, 
                              leyd = sprintf("%1s( %1s)" ,etiquet, percent))
@@ -300,7 +301,7 @@ facet_grid(vars(N.educ))
 Analicemos la edad
 
 ```{r message=FALSE, warning=FALSE}
-edad1 <-data1 %>% dplyr::select(1,21:28) %>%
+edad1 <-data1 %>% dplyr::select(1,21:29) %>%
   pivot_longer(-Dep, names_to = "edad", values_to = "Valor") %>% 
   group_by(edad) %>% 
   summarise(edad,Valor, Dep) 
@@ -370,6 +371,7 @@ ggplot(delit2, mapping = aes(x = Valor)) +
 facet_grid(vars(delitos))
 ```
 Nivel de Educaciòn
+
 ```{r message=FALSE, warning=FALSE}
 educ2<- data2 %>% dplyr::select(1,6:14) %>% 
   pivot_longer(-Dep, names_to = "N.educ", values_to = "Valor") %>% 
@@ -397,7 +399,7 @@ facet_grid(vars(N.educ))
 Analicemos la edad
 
 ```{r message=FALSE, warning=FALSE}
-edad2 <-data2 %>% dplyr::select(1,21:28) %>%
+edad2 <-data2 %>% dplyr::select(1,21:29) %>%
   pivot_longer(-Dep, names_to = "edad", values_to = "Valor") %>% 
   group_by(edad) %>% 
   summarise(edad,Valor, Dep) 
@@ -427,8 +429,400 @@ facet_grid(vars(edad))
 ```
 
 ## Análisis de Componentes Principales
+
+Con la data anteriormente explorada y verificada, procedemosa realizar los siguientes procedimientos.
+
+### Justificación del Análisis de Componentes Principales
+
+Antes de empezar con el Análisis de Componentes Principales, debemos asegurarnos que nuestras variables cumplan con la caracteristica de multicolinealidad, ello se observa en la alta correlación que existe entre ellas.
+
+Para ello procedemos a nombrar nuestras filas con los nombres de los departamentos ya que no lo necesitamos en el análisis ya que es un dato de tipo caracter.
+
+```{r include=FALSE}
+rownames(data2) <- data2$Dep
+data2$Dep <- NULL
+```
+
+Para mostrar la correlación en nuestras variables primero estandarizamos nuestras variables y luego ploteamos la correlación.
+
+```{r}
+sc_dat1 <- scale(data2)
+pairs.panels(sc_dat1, gap = 0, pch = 21, stars = TRUE, 
+             hist.col = 4, density = TRUE,
+             main = "Correlación entre variables"
+             )
+```
+
+```{r}
+cor_dat1 <- cor(sc_dat1)
+levelplot(
+  as.matrix(cor_dat1),
+  scales = list(x = list(rot = 90)),
+  col.regions =
+    cpt(
+      pal = "cb_seq_YlOrRd_09", n = 100, rev = F
+    ),
+  main = "Correlación entre variables",
+  xlab = "Variables",
+  ylab = "Variables"
+)
+```
+
+En la gráfica anterior podemos observar niveles de correlación que van aproximadamente desde -0.2 a 1, donde en el rango de -0.2 a 0.4 aproximadamente se puede considerar correlación baja entre las variables, mientras que en adelante se puede considerar de regular a buena, observando la gráfica nos percatamos de que las casillas están pintadas en mayor cantidad de la tonalidad guinda, lo cual nos dice que existe la correlación de nuestras variables, con ella podemos justificar el Análisis de Componenetes Principales.
+
+### Proceso análisis del PCA
+
+Para este análisis ejecutamos las siguientes líneas de código, en el cual la la función **dudi.pca** pertenece a la libreria **de4**.
+
+```{r}
+pca_dat1 <- dudi.pca(
+  sc_dat1, 
+  scale = F, 
+  scannf = F, 
+  nf = ncol(sc_dat1)
+)
+```
+
+A continuación veremos el resumen del análsis realizado anteriormente:
+
+```{r}
+factoextra::get_eig(pca_dat1) %>% kable(caption="Resumen de PCA",
+                                  align = "c",
+                                  digits = 2) %>%
+  kable_material(html_font = "sans-serif") %>%
+  kable_styling(bootstrap_options = c("hover"))
+```
+
+En este resumen presentado podemos observar los autovalores de los 5 primeros componentes. Sabemos que uno de los objetivos de Análisis de Componentes Principales es reducir la dimensionalidad creando nuevas variabales que contengan la misma información que las variables originales, para reducir está dimensionalidad tenemos uno de los métodos, las cuales nos indican que se retienen las componentes cuyos componentes tengan autovalores mayores a 1, bajo ese criterio observamos que hay 4 autovalores mayores a 1 las cuales podrían ser retennidas, sin embargo seguiremos analizando con otros criterios.
+
+Desglosamos la información de la siguiente manera.
+Obtenemos los valores propios:
+
+```{r}
+pca_dat1$eig
+```
+Obtenemos los vectores propios:
+```{r}
+pca_dat1$c1 %>% 
+  head()
+```
+
+Otro método a analizar para la retención de componentes principales, es a través de los gráficos de sedimentación, la cual mostramos a continuación.
+
+```{r warning=FALSE}
+fviz_eig(pca_dat1,
+         choice = "variance",
+         addlabels = T, 
+         barfill =  
+           cpt(
+             pal = "cb_seq_YlOrRd_09", n = 10, rev = T
+           ),
+         barcolor = "black"
+         ) +
+  labs(title = "Gráfico de sedimentación") +
+  xlab(label = "Componentes") + 
+  ylab(label =  "% Varianza")+
+  geom_hline(yintercept = 1)
+```
+
+En esta gráfica de sedimentación visualmente observamos que hay una abrupta caída entre la primera y la segunda componente, también se observa una diferencia aproximada entre la cuarta componente y la quinta. Al no tener clara aún seguimos analizando. 
+
+Analizamos la correlación entre las variables y los componentes principales
+
+```{r}
+levelplot(
+  as.matrix(pca_dat1$co),
+  scales = list(x = list(rot = 90)),
+  col.regions =
+    cpt(
+      pal = "cb_seq_YlOrRd_09", n = 100, rev = T
+    ),
+  main = "Correlación entre las variables y los componentes",
+  xlab = "Variables",
+  ylab = "Componentes"
+  )
+```
+
+Podemos observar que la primera componente tiene la mayor variancia explicada de las variables, ya que tiene mayor correlación con las variables, sin embargo, la variable **NEP** que corresponde al número de establlecimientos penitenciarios no puede ser explicado por la primera componente, se explica de mejor manera con la tercera componente, lo mismo sucede con el **DcAP** que es el Delito contra la Administración Pública, con ello podemos decir que es suficiente retener las tres primeras componentes. 
+
+A continuación graficamos la correlación entre las variables y cada una de las componentes.
+
+```{r}
+fviz_pca_var(pca_dat1,repel = TRUE, axes = c(1,2),
+             col.var = "Darkblue",
+             title = "Correlación Variables - PCA")+
+  theme_bw()
+```
+
+```{r}
+fviz_pca_var(pca_dat1,repel = TRUE, axes = c(1,3),
+             col.var = "DarkRed",
+             title = "Correlación Variables - PCA")+
+  theme_bw()
+```
+
+```{r}
+fviz_pca_var(pca_dat1,repel = TRUE, axes = c(2,3),
+             col.var = "Darkgreen",
+             title = "Correlación Variables - PCA")+
+  theme_bw()
+```
+
+A continuación analizamos la contribución de las variables a las componentes.
+
+```{r}
+contrib <- as.matrix(pca_dat1$co^2)
+corrplot(contrib, is.corr = T, method = "square", tl.cex = 1,
+         col = "Darkred", tl.col = "black")
+```
+
+En esta gráfica de la contribución podemos decir que un valor alto indica una buena representación de la variable frente a una componente, en este caso la mayor parte de las variables contribuyen mejor a la primera componente frente a los demás, el Número de Establecimientos Penitenciarios contribuye mejor a la tercera componente, asimismo el Delito contra el Patrimonio contribuye mejor a la segunda componente pero no en gran manera, por lo cual se optaría por eliminar dicha variable, sin embargo debido a que consideramos una variables importante al igual que la otras variables continuaremos con esta variable, finalmente el Delito contra la Administración Pública contribuye de mejor manera a la segunda componente.
+
+Finalmente obtenemos los scores o puntuaciones que son los resultados del PCA.
+
+```{r}
+pca_dat1$li %>% 
+  head()
+```
+
+Obtenemos la salida con los componentes retenidos.
+
+```{r}
+output_pca <- 
+  as.data.frame(pca_dat1$li) %>% 
+  dplyr::select(sprintf("Axis%1$s", 1:3))
+```
+
+También mostramos el gráfico biplot en la que se muestra no solo la correlación entre las variables sino se muestra la ubicación de los individuos, de ella se puede interpretar si estos individuos están o no asociados y en que medida a cada componente.
+
+```{r}
+fviz_pca_biplot( 
+  pca_dat1, axes = c(1,2), 
+  col.var = "Darkblue",
+  title = "Gráfica Biplot Comp1 - Comp2"      
+)
+```
+
+```{r}
+fviz_pca_biplot( 
+  pca_dat1, axes = c(1,3), 
+  col.var = "Darkred",
+  title = "Gráfica Biplot Comp1 - Comp3"      
+)
+```
+
+```{r}
+fviz_pca_biplot( 
+  pca_dat1, axes = c(2,3), 
+  col.var = "Darkgreen",
+  title = "Gráfica Biplot Comp2 - Comp3"      
+)
+```
+
+## Análisis de cluster
+
+### Matriz de distancias
+
+Después de realizar el Análisis de Componentes Principales se procede a calcular las distancias entre las observaciones, ello se realiza generalmente con el método euclidiano.
+
+```{r}
+distancia <- dist(output_pca, method = "euclidean")
+fviz_dist(distancia, gradient = list(low = "blue", 
+                                     mid = "white", high = "red"))
+```
+
+### Metodo Jerárquico
+
+Como sabemos el método jerarquico no requiere conocer previamente el número de clusters, sin embargo después de construir el dendograma se puede determinar un k-óptimo.
+
+Mostramos a continuación el dendograma, mediante en método de enlace Ward.D 
+
+```{r}
+hmodel <- hclust(distancia, method = "ward.D")
+plot(hmodel, main = "Dendograma", xlab = "Observaciones",
+     ylab = "Altura")
+```
+
+### Proceso de agrupamiento
+
+Para la selección de números de clusters ploteamos las alturas del dendograma generado anteriormente.
+
+```{r}
+plot(hmodel$height, type = "p", xlab = "Indice", ylab = "Altura")
+lines(hmodel$height)
+hmodel$height
+(hmodel$height)[18]
+```
+
+En el gráfico anterior se muestra un salto evidente en el indice 18 lo que muestra que a partir de ese punto el agrupamiento es más complicado, lo cual significa que no encuentra similaridad a partir de dicho punto, por lo cual a partir de ahí encontramos 3 clusters. Procedemos a cortar y observar cuales son las observaciones que se agrupan entre sí.
+
+```{r warning=FALSE}
+output_hc <- hcut(output_pca, k = 3)
+fviz_dend(output_hc, rect = TRUE, cex = 0.5,
+          k_colors = c("#2E9FDF", "#E7B800", "#FC4E07"))
+```
+
+Otro método para detectar la cantidad de cluster a generar es con función Heatmap, como mostramos a continuación.
+
+```{r}
+dist2 <- as.matrix(distancia)
+heatmap(dist2)
+```
+
+En el gráfico anterior observamos que se generan 3 cuadrantes en la diagonal lo que ello nos indica es la cantidad de cluster óptimos para el análisis.
+
+### Método K-means
+
+#### Determinación óptima del número de cluster
+
+Mostramos a continuación tres principales métodos de los tantos que hay para obtener el k-óptimo, en la que se observa que los dos primeros métodos nos indican que se deben clusterizar en 3 grupos, mientras que el tercer método nos indica solo un cluster.
+
+```{r}
+fviz_nbclust(output_pca, kmeans, method = "wss",
+             linecolor = "Darkblue")+
+  labs(title = "Número de Clusters Óptimo")+
+  xlab("Número de clusters K")+
+  ylab("Total de la suma del cuadrado")
+
+fviz_nbclust(output_pca, kmeans, method = "silhouette",
+             linecolor = "Darkred")+
+  labs(title = "Número de Clusters Óptimo")+
+  xlab("Número de clusters K")+
+  ylab("Ancho medio de silueta")
+
+fviz_nbclust(output_pca, kmeans, method = "gap_stat",
+             linecolor = "Darkgreen")+
+  labs(title = "Número de Clusters Óptimo")+
+  xlab("Número de clusters K")+
+  ylab("Estadisticas de brecha")
+```
+
+Para tener mayor seguridad de cuántos cluster agrupar, calculamos con todos los métodos, las cuales al final nos van a indicar cual es el k-óptimo para la mayoría de los métodos. 
+
+```{r warning=FALSE}
+resnumclust<-NbClust(output_pca, distance = "euclidean", min.nc = 2, max.nc = 10, method = "kmeans", index = "alllong")
+```
+
+Graficamos el resultado y observamos que el k-óptimo para más de 15 métodos es 3. 
+
+```{r warning=FALSE}
+fviz_nbclust(resnumclust,
+            barfill = "Darkblue",
+            barcolor = "black")+
+  labs(title = "Número Óptimo de Clusters - K = 3")+
+  xlab("Número de clusters K")+
+  ylab("Frecuencia entre todos los índices")
+  
+```
+
+### K-means
+
+Ejecutamos la función del cálculo de cluster K-means que usa el algoritmo estudiado de Hartigan-Wong, sabemos que para ellos previamente se ha definido el k-óptimo lo cual indicamos en este método para la cantidad de centroides, que a diferencia del método jerárquico, en ella no era necesario tener previamente la cantidad de cluster que se quería.
+
+```{r warning=FALSE}
+set.seed(2021)
+model <- 
+  kmeans(
+    x = output_pca, centers = 3, iter.max = 200,
+    nstart = 200, algorithm = "Hartigan-Wong", 
+    trace = F
+  )
+fviz_cluster(model, data = sc_dat1, show.clust.cent = TRUE,
+             frame.type = "convex", star.plot = TRUE, repel = TRUE)+
+  labs(title = "Resultados clustering K-means")+
+  theme_bw()
+```
+
+Calculamos los valores de silueta para el modelo que representan la similitud de un objeto con los otros objetos de su propio cluster, también debemos precisar que los valores de silueta cercanos a 1indica que el objeto está bien agrupado, es decir que es similiar a los otros objetos de su grupo, y un valor cercano a -1 indica que el objeto está mal agrupado. 
+
+```{r}
+sil <- cluster::silhouette(model$cluster, dist(output_pca))
+head(sil)
+```
+
+```{r}
+factoextra::fviz_silhouette(sil)+
+  coord_flip()+
+  theme_bw()
+```
+
+Del gráfico de los valores de la silueta del modelo podemos decir que nuestras observaciones se encuntran bien agrupadas, además no se obtinen valores negativos cercanos a -1.
+
+### K-means++
+
+Ahora pasamos a ver una de las variantes del modelo K-means y analizaremos los resultados.
+
+```{r warning=FALSE}
+set.seed(2021)
+model2 <- 
+  LICORS::kmeanspp(
+    data = output_pca, k = 3, 
+    start = "random", iter.max = 100,
+    nstart = 100, algorithm = "Hartigan-Wong"
+  )
+fviz_cluster(model2, data = sc_dat1, show.clust.cent = TRUE,
+             frame.type = "convex", star.plot = TRUE, repel = TRUE)+
+  labs(title = "Resultados clustering K-means++")+
+  theme_bw()
+```
+
+
+```{r}
+sil2 <- cluster::silhouette(model2$cluster, dist(output_pca))
+head(sil)
+```
+
+```{r}
+factoextra::fviz_silhouette(sil2)+
+  coord_flip()+
+  theme_bw()
+```
+
+Pasamos a calcular el indice de cohesion de nuestros resultados, tenemos 2 índices.
+
+- Índice de Dvies-Boulding
+
+```{r}
+grupo2 <- model2$cluster
+indice2 <- clusterSim::index.DB(output_pca, grupo2, 
+                                centrotypes = "centroids")
+indice2$DB
+```
+
+- Índice de Dunn
+
+```{r}
+clValid::dunn(Data = output_pca, clusters = grupo2, distance = NULL)
+```
+
+### K-medoids PAM
+
+El método K-medoids es un método de clustering muy similar a K-means, sabemos que este método es más robusto por lo cual soporta los outliers, debido a que en nuestro Análisis Exploratorio de Datos se evidencia los outliers, este método va de la mano con el uso del cálculo de las distancias con el método Manhattan.
+
+```{r warning=FALSE}
+set.seed(2021)
+pam_clusters <- pam(x = output_pca, k = 3, metric = "manhattan")
+fviz_cluster(object = pam_clusters, data = sc_dat1, frame.type = "convex",
+             repel = TRUE, show.clust.cent = TRUE, star.plot = TRUE) +
+  labs(title = "Resultados clustering PAM") +
+  theme_bw()
+```
+
+
+```{r}
+sil3 <- cluster::silhouette(pam_clusters$clustering, dist(output_pca))
+head(sil3)
+```
+
+```{r}
+factoextra::fviz_silhouette(sil3)+
+  coord_flip()+
+  theme_bw()
+```
+
 # RESULTADOS
 # DISCUSION DE RESULTADOS
 # CONCLUSIONES
 # RECOMENDACIONES
 # BIBLIOGRAFIA
+
