@@ -238,11 +238,18 @@ En el gràfico podemos observar que el numero de varones es mucho mayor que las 
 Tipo de delito 
 
 ```{r message=FALSE, warning=FALSE}
+is_outlier <- function(x) {
+  return(x < quantile(x, 0.25) - 1.5 * IQR(x) | x > quantile(x, 0.75) + 1.5 * IQR(x))
+}
+
 delit<- data1 %>% dplyr::select(1,15:20) %>% 
-    pivot_longer(-Dep, names_to = "delitos", values_to = "Valor") %>% 
+  pivot_longer(-Dep, names_to = "delitos", values_to = "Valor") %>% 
   group_by(delitos) %>% 
-  summarise(delitos,Valor, Dep)
-ggplot(delit , mapping = aes( x = delitos , y = Valor , fill = delitos))+
+  summarise(delitos,Valor, Dep ,
+            outlier = ifelse(is_outlier(Valor), 
+                             sprintf("%1s( %1s)" ,Valor, Dep), 
+                             as.numeric(NA)))
+ggplot(delit , mapping = aes( x = factor(delitos) , y = Valor , fill = delitos))+
   stat_boxplot(geom = "errorbar", # Error bars
                width = 0.25) +    # Bars width
   geom_boxplot(alpha = 0.8,          # Transparencia
@@ -257,21 +264,26 @@ ggplot(delit , mapping = aes( x = delitos , y = Valor , fill = delitos))+
                                   color="blue", #Color del texto
                                   lineheight=1.5))+
   scale_fill_hue(labels =c("D. C. la administracion publica",
-                               "D. C. la familia",
-                               "D. C. la libertad",
-                               "D. C. patrominio",
-                               "D. C. la seguridad publica",
-                               "D. C. la vida, el cuerpo y la salud"))
+                           "D. C. la familia",
+                           "D. C. la libertad",
+                           "D. C. patrominio",
+                           "D. C. la seguridad publica",
+                           "D. C. la vida, el cuerpo y la salud"))+
+  geom_text(aes(label = outlier), na.rm = TRUE, hjust = -0.3)
 
+
+```
+
+En este grafico de cajas podemos observar que, la caja que representa al número de personas que cometen el delito contra el patrimonio (color celeste) es mayor que el de los otros delitos, a este tipo de delito le sigue el delito contra la familia y el delito contra la seguridad pública, la mediana se muestra en el centro, lo que indica que hay simetría en la distribución de número de personas, notamos también un valor atípico extremo muy alejado en la caja que representa al delito contra el patrimonio, lo que indicaría que en un momento dado, el número de personas que cometieron el delito contra el patrimonio supero los 12000, lo que nos indica que se trata de la provincia de Lima.
+
+```{r}
 ggplot(delit, mapping = aes(x = Valor)) +
   geom_histogram( aes(fill = delitos)) +
   labs(title = "Distribuciòn de delitos segùn tipo",
        y = "Tipo de delito") +
 facet_grid(vars(delitos))
-
 ```
 
-En este grafico de cajas podemos observar que, la caja que representa al número de personas que cometen el delito contra el patrimonio (color celeste) es mayor que el de los otros delitos, a este tipo de delito le sigue el delito contra la familia y el delito contra la seguridad pública, la mediana se muestra en el centro, lo que indica que hay simetría en la distribución de número de personas, notamos también un valor atípico extremo muy alejado en la caja que representa al delito contra el patrimonio, lo que indicaría que en un momento dado, el número de personas que cometieron el delito contra el patrimonio supero los 12000, lo que nos indica que se trata de la provincia de Lima.
 En esta grafica podemos notar que el delito que presenta mayor distribución en número de veces que los cometen es el delito contra el patrimonio, que es el delito que atenta contra los bienes de una persona.
 La distribución de los delitos contra la administración pública y delitos contra la familia se muestra como un delito cometido pocas veces. 
 
@@ -282,9 +294,11 @@ Nivel de Educaciòn
 educ<- data1 %>% dplyr::select(1,6:14) %>% 
   pivot_longer(-Dep, names_to = "N.educ", values_to = "Valor") %>% 
   group_by(N.educ) %>% 
-  summarise(N.educ,Valor, Dep)
+  summarise(N.educ,Valor, Dep , outlier = ifelse(is_outlier(Valor), 
+                             sprintf("%1s( %1s)" ,Valor, Dep), 
+                             as.numeric(NA)))
 
-  ggplot( educ, mapping = aes( x = N.educ , y = Valor , fill = N.educ))+
+ggplot( educ, mapping = aes( x = N.educ , y = Valor , fill = N.educ))+
   stat_boxplot(geom = "errorbar",
                width = 0.25) + 
   geom_boxplot(alpha = 0.8,          # Transparencia
@@ -292,17 +306,21 @@ educ<- data1 %>% dplyr::select(1,6:14) %>%
                outlier.colour = 1) + # Color atípicos
   theme(
     panel.background = element_rect(fill = "beige")
-  )
+  )+  geom_text(aes(label = outlier), na.rm = TRUE, hjust = -0.3)
 
+```
+
+En la gráfica podemos apreciar el nivel de educación de las personas que han cometido los distintos tipos de delitos, siendo el rango de las personas con secundaria incompleta (color verde) las que se han vistos involucrados en delitos más que en los demás niveles de educación, seguido de las personas con secundaria completa y personas con primaria incompleta.
+
+```{r}
 ggplot(educ, mapping = aes(x = Valor)) +
   geom_histogram( aes(fill = N.educ)) +
   labs(title = "Distribuciòn de delitos segùn nivel de educaciòn",
        y = "Nivel de educaciòn") +
 facet_grid(vars(N.educ))
-
 ```
 
-En la gráfica podemos apreciar el nivel de educación de las personas que han cometido los distintos tipos de delitos, siendo el rango de las personas con secundaria incompleta (color verde) las que se han vistos involucrados en delitos más que en los demás niveles de educación, seguido de las personas con secundaria completa y personas con primaria incompleta.
+
 Podemos apreciar que la población que cuenta con un nivel educativo de secundaria incompleta tiene mayor distribución en cuanto a número de delitos cometidos, seguido de personas con un nivel educativo de secundaria completa y primaria incompleta.
 
 Analicemos la edad
@@ -311,7 +329,10 @@ Analicemos la edad
 edad1 <-data1 %>% dplyr::select(1,21:29) %>%
   pivot_longer(-Dep, names_to = "edad", values_to = "Valor") %>% 
   group_by(edad) %>% 
-  summarise(edad,Valor, Dep) 
+  summarise(edad,Valor, Dep, 
+            outlier = ifelse(is_outlier(Valor), 
+                             sprintf("%1s( %1s)" ,Valor, Dep), 
+                             as.numeric(NA))) 
 
   ggplot(edad1, mapping = aes( x = edad , y = Valor , fill = edad))+
   stat_boxplot(geom = "errorbar",
@@ -328,15 +349,21 @@ edad1 <-data1 %>% dplyr::select(1,21:29) %>%
                               face="bold", #Letra negrilla. Otras posibilidades "plain", "italic", "bold" y "bold.italic"
                               color="blue", #Color del texto
                               lineheight=1.5)
-  )
+  )+geom_text(aes(label = outlier), na.rm = TRUE, hjust = -0.3)
+
+
+```
+En la gráfica se muestra el número de delitos cometidos y su relación con el grupo etario notando que el grupo que comete más delitos es el que se encuentra en el rango de 25 a 29 años, seguido de las personas que se encuentran entre los 30 a 34 años, y los que tienen de 20 a 24 años.
+
+```{r}
 ggplot(edad1, mapping = aes(x = Valor)) +
   geom_histogram( aes(fill = edad)) +
   labs(title = "Distribuciòn de delitos segùn grupo de edad",
        y = "Grupo de edad") +
 facet_grid(vars(edad))
-
 ```
-En la gráfica se muestra el número de delitos cometidos y su relación con el grupo etario notando que el grupo que comete más delitos es el que se encuentra en el rango de 25 a 29 años, seguido de las personas que se encuentran entre los 30 a 34 años, y los que tienen de 20 a 24 años.
+
+
 La distribución de los delitos según el grupo etario nos permite corroborar lo dicho en el grafico anterior, el grupo que se encuentra entre los 30 a 34 años tienen datos distribuidos a lo largo del eje de números de delitos  
 
 
@@ -348,7 +375,8 @@ data2 <- data1[-14,]
 
 Tipos de delitos
 
-```{r}
+```{r message=FALSE, warning=FALSE}
+
 delit2<- data2 %>% dplyr::select(1,15:20) %>% 
     pivot_longer(-Dep, names_to = "delitos", values_to = "Valor") %>% 
   group_by(delitos) %>% 
@@ -374,6 +402,11 @@ ggplot(delit2 , mapping = aes( x = delitos , y = Valor , fill = delitos))+
                                "D. C. la seguridad publica",
                                "D. C. la vida, el cuerpo y la salud"))
 
+```
+
+En este grafico se evalua los delitos según su tipo, sin considerar a Lima, lo cual nos indica que el mayor rango lo tiene el delito contra el patrimonio, esta vez el valor atípico no se muestra muy distante y no llega a pasar de los 4000 delitos.
+
+```{r}
 ggplot(delit2, mapping = aes(x = Valor)) +
   geom_histogram( aes(fill = delitos)) +
   labs(title = "Distribuciòn de delitos segùn tipo",
@@ -381,7 +414,6 @@ ggplot(delit2, mapping = aes(x = Valor)) +
 facet_grid(vars(delitos))
 ```
 
-En este grafico se evalua los delitos según su tipo, sin considerar a Lima, lo cual nos indica que el mayor rango lo tiene el delito contra el patrimonio, esta vez el valor atípico no se muestra muy distante y no llega a pasar de los 4000 delitos.
 
 En la gráfica apreciamos que los datos del delito contra el patrimonio es mayor están más distribuidos que cualquier otro delito, seguido del delito de seguridad pública.
 
@@ -403,15 +435,18 @@ educ2<- data2 %>% dplyr::select(1,6:14) %>%
     panel.background = element_rect(fill = "beige")
   )
 
+```
+
+Según este gráfico, podemos apreciar que el rango de delitos es mayor en la población que tiene secundaria completa con la mediana que nos indica una simetría entre los datos recogidos, también están el grupo que tiene un nivel educativo de secundaria incompleta.
+
+```{r}
 ggplot(educ2, mapping = aes(x = Valor)) +
   geom_histogram( aes(fill = N.educ)) +
   labs(title = "Distribuciòn de delitos segùn nivel de educaciòn",
        y = "Nivel de educaciòn") +
 facet_grid(vars(N.educ))
-
 ```
 
-Según este gráfico, podemos apreciar que el rango de delitos es mayor en la población que tiene secundaria completa con la mediana que nos indica una simetría entre los datos recogidos, también están el grupo que tiene un nivel educativo de secundaria incompleta.
 
 En la gráfica presentada vemos que el grupo con un nivel educativo de secundaria incompleta se muestra más distribuido a lo largo del eje de números de delitos seguido de los que tienen un nivel educativo de secundaria completa.
 
@@ -440,14 +475,18 @@ edad2 <-data2 %>% dplyr::select(1,21:29) %>%
                               color="blue", #Color del texto
                               lineheight=1.5)
   )
+
+```
+Sin contar a Lima podemos notar que el rango intercuartlico es más apreciable en todos los grupos etarios siendo los más resaltantes las personas que se encuentra entre los 25 a 29 años y los de 30 a 34 años, la mediana se sitúa casi en el centro de la caja por lo que podríamos decir que la distribución es simétrica.
+
+```{r}
 ggplot(edad2, mapping = aes(x = Valor)) +
   geom_histogram( aes(fill = edad)) +
   labs(title = "Dsitribuciòn de delitos segùn rango de edad",
        y = "Grupo de edad") +
 facet_grid(vars(edad))
-
 ```
-Sin contar a Lima podemos notar que el rango intercuartlico es más apreciable en todos los grupos etarios siendo los más resaltantes las personas que se encuentra entre los 25 a 29 años y los de 30 a 34 años, la mediana se sitúa casi en el centro de la caja por lo que podríamos decir que la distribución es simétrica.
+
 
 En la gráfica presentada vemos que el grupo etario que se muestra más distribuido a lo largo del eje de números de delitos son los que están entre los 25 a 29 años seguidos de los que tienen entre 20 a 24 años, lo que indicaría que los delitos cometidos por ambos grupos etarios sobrepasan los 1000 delitos
 
